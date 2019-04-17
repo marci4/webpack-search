@@ -1,0 +1,9 @@
+{
+  "name": "webpack-analyzer",
+  "bin": "./cli.js",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "yargs": "^6.5.0"
+  },
+  "devDependencies": {}
+}
