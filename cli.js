@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// documentation https://webpack.js.org/api/stats/
 var argv = require('yargs')
     .usage('Usage: webpack-stats-duplicates <stats.json>')
     .demand(1, 'Please specify a <stats.json> file.')
