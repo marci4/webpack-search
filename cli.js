@@ -85,7 +85,7 @@ function checkFileHierarchy(file, current, packageData) {
 			existingPackageInfo = packageData[packageInfo.name];
 			if (existingPackageInfo !== undefined) {
 				if (arePackageInfosDifferent(existingPackageInfo, packageInfo)) {
-					// TODO write error to file
+					// TODO writeResult error to file
 					console.error("Different packages found: ", packageInfo, existingPackageInfo)
 				} else {
 					existingPackageInfo.files.push(file);
@@ -125,7 +125,7 @@ function checkFileHierarchy(file, current, packageData) {
 }
 
 function arePackageInfosDifferent(existingPackageInfo, packageInfo) {
-	if (existingPackageInfo.version !== packageInfo.version || existingPackageInfo.license !== packageInfo.license)
+	if (existingPackageInfo.version !== packageInfo.version || existingPackageInfo.licenses !== packageInfo.licenses)
 		return true;
 	if (existingPackageInfo.author === undefined && packageInfo.author === undefined)
 		return false;
@@ -140,7 +140,7 @@ function checkForAdditionalLicenses(searchPath) {
 			files = fs.readdirSync(searchPath);
 			var result = [];
 			files.forEach(function (file) {
-				if (file.toLowerCase().includes("license") || file.toLowerCase().includes("licence")) {
+				if (file.toLowerCase().includes("licenses") || file.toLowerCase().includes("licence")) {
 					const resultingPath = path.resolve(searchPath + "\\" + file);
 					if (!result.includes(resultingPath)) {
 						result.push(resultingPath);
@@ -162,7 +162,7 @@ function checkForPackageJson(path) {
 				return {
 					"name": json.name,
 					"version": json.version,
-					"license": json.license,
+					"license": json.licenses,
 					"author": json.author,
 					"packageJson": packagePath
 				};
