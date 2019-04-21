@@ -2,6 +2,7 @@ import * as yargs from "yargs";
 import {Analyzer} from "./analyzer";
 import {Configuration} from "./configuration/configuration";
 import {Constants} from "./configuration/constants";
+import {Writer} from "./writer/writer";
 
 export async function main(argv?: string[]) {
 
@@ -36,4 +37,5 @@ export async function main(argv?: string[]) {
 	}
 	const config = new Configuration(arg);
 	const result = Analyzer.analyze(config);
+	Writer.writeResult(config, result);
 }
