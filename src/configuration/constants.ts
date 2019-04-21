@@ -1,6 +1,6 @@
 export class Constants {
-	public static EXTRACTLICENSES: string = "extractLicenses";
-	public static WORKINGDIRECTORY: string = "workingDirectory";
-	public static RESULT: string = "result";
-	public static STATS: string = "stats";
+	public static readonly EXTRACTLICENSES: string = "extractLicenses";
+	public static readonly WORKINGDIRECTORY: string = "workingDirectory";
+	public static readonly RESULT: string = "result";
+	public static readonly STATS: string = "stats";
 }
