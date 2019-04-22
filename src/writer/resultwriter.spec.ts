@@ -1,4 +1,4 @@
-describe("Writer", () => {
+describe("Resultwriter", () => {
 	xit("TODO", () => {
 		// TODO
 	});

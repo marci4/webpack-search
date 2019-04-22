@@ -1,6 +1,7 @@
 import * as fs from "fs";
-import {Configuration} from "./configuration/configuration";
-import {Result} from "./results/result";
+import {Configuration} from "../configuration/configuration";
+import {Result} from "../results/result";
+import {FileCollector} from "./filecollector";
 
 export class Analyzer {
 
@@ -11,6 +12,11 @@ export class Analyzer {
 		if (result.errors.length !== 0) {
 			return result;
 		}
+		const fileCollector = new FileCollector(json);
+		if (!fileCollector.filesFound()) {
+			return result;
+		}
+
 		return result;
 	}
 

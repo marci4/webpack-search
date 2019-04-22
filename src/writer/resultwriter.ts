@@ -2,10 +2,10 @@ import * as fs from "fs";
 import {Configuration} from "../configuration/configuration";
 import {Result} from "../results/result";
 
-export class Writer {
+export class ResultWriter {
 
 	public static writeResult(configuration: Configuration, result: Result): void {
-		const data = Writer.getData(configuration, result);
+		const data = ResultWriter.getData(configuration, result);
 		fs.writeFileSync(configuration.resultJsonPath, data);
 	}
 
