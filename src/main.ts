@@ -4,7 +4,7 @@ import {Configuration} from "./configuration/configuration";
 import {Constants} from "./configuration/constants";
 import {ResultWriter} from "./writer/resultwriter";
 
-export async function main(argv?: string[]) {
+export async function main(argv: string[]) {
 
 	const arg = yargs
 		.option(Constants.WORKINGDIRECTORY, {
@@ -29,13 +29,14 @@ export async function main(argv?: string[]) {
 			type: "boolean",
 		})
 		.help();
+	let yargsResult = null;
 	try {
-		arg.parse((argv || process.argv).slice(2));
+		yargsResult =  arg.parse((argv).slice(2));
 	} catch (err) {
 		console.error(err);
 		process.exit(1);
 	}
-	const config = new Configuration(arg);
+	const config = new Configuration(yargsResult);
 	const result = Analyzer.analyze(config);
 	ResultWriter.writeResult(config, result);
 }

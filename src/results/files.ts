@@ -1,7 +1,9 @@
+import {FileReference} from "./fileReference";
+
 export class Files {
-	public readonly modules: File[];
+	public readonly modules: FileReference[] = [];
 
-	public readonly src: File[];
+	public readonly src: FileReference[] = [];
 
-	public readonly unknown: File[];
+	public readonly unknown: FileReference[] = [];
 }
