@@ -6,10 +6,8 @@ export class FileReference {
 	public readonly built: boolean;
 	public reasons: Reason[] = [];
 	public assets: AssetReference[] = [];
-	public readonly size: number;
-	constructor(name: string, built: boolean, size: number) {
+	constructor(name: string, built: boolean) {
 		this.name = name;
 		this.built = built;
-		this.size = size;
 	}
 }

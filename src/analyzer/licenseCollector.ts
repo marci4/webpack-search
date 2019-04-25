@@ -1,15 +1,14 @@
 import * as fs from "fs";
 import * as path from "path";
-import {PackageInformation} from "../results/packageInformation";
-import {FileCollector} from "./filecollector";
+import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
 import {LicenseInformation} from "../results/licenseInformation";
-import {FileReference} from "../results/fileReference";
 import {FolderRunner} from "../utils/folderRunner";
+import {FileCollector} from "./filecollector";
 
 export class LicenseCollector {
 
-	public static collectLicenses(fileCollector: FileCollector): LicenseInformation[]{
+	public static collectLicenses(fileCollector: FileCollector): LicenseInformation[] {
 		return this.collectLicensesFromModule(fileCollector.files);
 	}
 
@@ -25,47 +24,27 @@ export class LicenseCollector {
 	}
 
 	private static checkFileReference(file: FileReference, name: string, licenseData: LicenseInformation[]): void {
-		FolderRunner.checkFolder(file, name, ((currentFolder) => {
-			const licenseInfo = LicenseCollector.extractLicenses(currentFolder);
+		if (!FolderRunner.checkFolder(file, name, ((currentFolder) => {
+			const licensePaths = LicenseCollector.checkForAdditionalLicenses(currentFolder);
 			let existingLicenseInfo: LicenseInformation = null;
-			if (licenseInfo !== null) {
-				// tslint:disable-next-line:max-line-length
-				existingLicenseInfo = licenseData.find((packageEntry) => packageEntry.name === licenseInfo.name && packageEntry.version === licenseInfo.version);
+			for (const licensePath of licensePaths) {
+				existingLicenseInfo = licenseData.find((licenseEntry) => licenseEntry.licensePath === licensePath);
 				if (existingLicenseInfo !== undefined) {
-					existingLicenseInfo.files.push(file);
+					existingLicenseInfo.fileReferences.push(file);
 				} else {
-					licenseInfo.files.push(file);
+					const licenseInfo = new LicenseInformation(licensePath, file);
 					licenseData.push(licenseInfo);
 				}
 			}
-		}));
-	}
-
-	private extractLicenses(currentFolder: string): LicenseInformation {
-			const additionalLicenses = LicenseCollector.checkForAdditionalLicenses(path.resolve(currentFolder));
-			if (additionalLicenses.length !== 0) {
-				if (existingPackageInfo !== null) {
-					for (const additionalLicense of additionalLicenses) {
-						if (!existingPackageInfo.additionalLicenses.includes(additionalLicense)) {
-							existingPackageInfo.additionalLicenses.push(additionalLicense);
-						}
-					}
-				} else {
-					let unreferencedLicense = packageData.find((packageEntry) => packageEntry.name === "UnreferencedLicense");
-					// Also collect lonely licenses with are not in the same directory as a package.json
-					if (unreferencedLicense === undefined) {
-						unreferencedLicense = new PackageInformation("UnreferencedLicense")
-					}
-					for (const additionalLicense of additionalLicenses) {
-						if (packageData.UnreferencedLicense[additionalLicense] === undefined) {
-							packageData.UnreferencedLicense[additionalLicense] = {files: []};
-						}
-						if (!packageData.UnreferencedLicense[additionalLicense].files.includes(file)) {
-							packageData.UnreferencedLicense[additionalLicense].files.push(file);
-						}
-					}
-				}
+			return licensePaths.length > 0;
+		}))) {
+			const missingLicenseInfo = licenseData.find((licenseEntry) => licenseEntry.licensePath === null);
+			if (missingLicenseInfo === undefined) {
+				licenseData.push(new LicenseInformation(null, file));
+			} else {
+				missingLicenseInfo.fileReferences.push(file);
 			}
+		}
 	}
 
 	private static checkForAdditionalLicenses(searchPath: string): string[] {
@@ -74,7 +53,8 @@ export class LicenseCollector {
 				const files = fs.readdirSync(searchPath);
 				const result: string[] = [];
 				for (const file of files) {
-					if (file.toLowerCase().includes("packageLicense") || file.toLowerCase().includes("licence")) {
+					// angular uses readme...
+					if (file.toLowerCase().includes("license") || file.toLowerCase().includes("licence")) {
 						const resultingPath = path.resolve(searchPath + "\\" + file);
 						if (!result.includes(resultingPath)) {
 							result.push(resultingPath);

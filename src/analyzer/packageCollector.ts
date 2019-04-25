@@ -1,11 +1,10 @@
 import * as fs from "fs";
-import * as path from "path";
 import {Author} from "../results/author";
 import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
 import {PackageInformation} from "../results/packageInformation";
-import {FileCollector} from "./filecollector";
 import {FolderRunner} from "../utils/folderRunner";
+import {FileCollector} from "./filecollector";
 
 export class PackageCollector {
 	public static collectPackages(fileCollector: FileCollector): PackageInformation[] {
@@ -29,8 +28,8 @@ export class PackageCollector {
 				const packagePath = currentFolder + "\\package.json";
 				if (fs.existsSync(packagePath)) {
 					const json = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-					const author = Author.parse(json.packageAuthor);
-					return new PackageInformation(json.name, json.version, json.licenses, author, packagePath);
+					const author = Author.parse(json.author);
+					return new PackageInformation(json.name, json.version, json.license, author, packagePath);
 				}
 			}
 		}
@@ -38,10 +37,14 @@ export class PackageCollector {
 	}
 
 	private static checkFileReference(file: FileReference, name: string, packageData: PackageInformation[]): void {
-		FolderRunner.checkFolder(file, name, ((currentFolder) => {
+		if (!FolderRunner.checkFolder(file, name, ((currentFolder) => {
 			const packageInfo = PackageCollector.extractPackageInfo(currentFolder);
 			let existingPackageInfo = null;
 			if (packageInfo !== null) {
+				if (packageInfo.name.startsWith("@angular/material/")) {
+					// Angular material has some package.json without any info, so lets go deeper.
+					return false;
+				}
 				// tslint:disable-next-line:max-line-length
 				existingPackageInfo = packageData.find((packageEntry) => packageEntry.name === packageInfo.name && packageEntry.version === packageInfo.version);
 				if (existingPackageInfo !== undefined) {
@@ -50,7 +53,16 @@ export class PackageCollector {
 					packageInfo.files.push(file);
 					packageData.push(packageInfo);
 				}
+				return true;
 			}
-		}));
+			return false;
+		}))) {
+			let missingPackageInfo = packageData.find((packageEntry) => packageEntry.name === null);
+			if (missingPackageInfo === undefined) {
+				missingPackageInfo = new PackageInformation(null, null, null, null, null);
+				packageData.push(missingPackageInfo);
+			}
+			missingPackageInfo.files.push(file);
+		}
 	}
 }

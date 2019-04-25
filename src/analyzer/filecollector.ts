@@ -2,7 +2,6 @@ import {AssetReference} from "../results/assetReference";
 import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
 import {Reason} from "../results/reason";
-
 export class FileCollector {
 
 	private static collectReasons(reasons: any[]): Reason[] {
@@ -11,7 +10,7 @@ export class FileCollector {
 		}
 		const result = [];
 		for (const reason of reasons) {
-			result.push(new Reason(reason.moduleName, reason.moduleIdentifier));
+			result.push(new Reason(reason.moduleName, reason.moduleIdentifier, reason.type));
 		}
 		return result;
 	}
@@ -27,6 +26,7 @@ export class FileCollector {
 		}
 		return result;
 	}
+
 	public readonly files = new Files();
 
 	constructor(json: any) {
@@ -61,19 +61,55 @@ export class FileCollector {
 			return;
 		}
 		for (const module of modules) {
-			const name = module.name;
-			const fileReference = new FileReference(name, module.built, module.size);
+			const fileReference = new FileReference(module.name, module.built);
 			fileReference.assets = FileCollector.collectAssets(module.assets);
 			fileReference.reasons = FileCollector.collectReasons(module.reasons);
 			this.collectModules(module.modules);
-			if (name.startsWith("./node_modules/")) {
-				this.files.modules.push(fileReference);
-			} else if (name.startsWith("./src/")) {
-				this.files.src.push(fileReference);
-			} else {
-				// TODO Better handle multi & css
-				this.files.unknown.push(fileReference);
+			this.addFileReferencetoFiles(fileReference);
+		}
+	}
+
+	private addFileReferencetoFiles(fileReference: FileReference) {
+		if (fileReference.reasons.length === 1) {
+			if (fileReference.reasons[0].type === "multi entry") {
+				let fileReferenceName = fileReference.name;
+				if (fileReferenceName.startsWith("multi ")) {
+					fileReferenceName = fileReferenceName.substr("multi ".length);
+				}
+				for (const subName of fileReferenceName.split(" ")) {
+					const subFileReference = new FileReference(subName, fileReference.built);
+					subFileReference.assets = fileReference.assets;
+					// Do NOT include the reasons...
+					this.addFileReferencetoFiles(subFileReference);
+				}
+				return;
 			}
+		}
+		if (fileReference.name.startsWith("./node_modules/")) {
+			if (this.files.modules.find((fileEntry) => {
+				return fileEntry.name === fileReference.name;
+			}) === undefined) {
+				this.files.modules.push(fileReference);
+			}
+		} else if (fileReference.name.startsWith("./src/")) {
+			if (this.files.src.find((fileEntry) => {
+				return fileEntry.name === fileReference.name;
+			}) === undefined) {
+				this.files.src.push(fileReference);
+			}
+		} else {
+			if (fileReference.name.startsWith("multi")) {
+				const name = fileReference.name.substr("multi ".length);
+				for (const subName of name.split(" ")) {
+					const subFileReference = new FileReference(subName, fileReference.built);
+					subFileReference.assets = fileReference.assets;
+					subFileReference.reasons = fileReference.reasons;
+					this.addFileReferencetoFiles(subFileReference);
+				}
+				return;
+			}
+			// TODO Better handle multi & css
+			this.files.unknown.push(fileReference);
 		}
 	}
 }

@@ -8,7 +8,7 @@ export class PackageInformation {
 	public readonly packageLicense: string;
 	public readonly packageAuthor: Author;
 	public readonly packagePath: string;
-	public readonly files: FileReference[];
+	public readonly files: FileReference[] = [];
 
 	constructor(name: string, version: string, license: string, author: Author, packagePath: string) {
 		this.name = name;
