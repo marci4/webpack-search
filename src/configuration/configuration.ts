@@ -6,7 +6,7 @@ export class Configuration {
 	public readonly statsJsonPath: string;
 	public readonly resultJsonPath: string;
 	public readonly extractLicenses: boolean = true;
-	constructor(args: Argv) {
+	constructor(args: any) {
 		this.extractLicenses = args[Constants.EXTRACTLICENSES];
 		this.statsJsonPath = args[Constants.STATS];
 		this.workingDirectoryPath = args[Constants.WORKINGDIRECTORY];

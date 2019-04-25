@@ -4,6 +4,29 @@ import {Files} from "../results/files";
 import {Reason} from "../results/reason";
 
 export class FileCollector {
+
+	private static collectReasons(reasons: any[]): Reason[] {
+		if (reasons === undefined || (!(reasons instanceof Array))) {
+			return [];
+		}
+		const result = [];
+		for (const reason of reasons) {
+			result.push(new Reason(reason.moduleName, reason.moduleIdentifier));
+		}
+		return result;
+	}
+
+	private static collectAssets(assets: any[]): AssetReference[] {
+		if (assets === undefined || (!(assets instanceof Array))) {
+			return [];
+		}
+		const result = [];
+		for (const asset of assets) {
+			// TODO Maybe include some more info
+			result.push(new AssetReference(asset.name, asset.emitted, asset.size));
+		}
+		return result;
+	}
 	public readonly files = new Files();
 
 	constructor(json: any) {
@@ -40,8 +63,8 @@ export class FileCollector {
 		for (const module of modules) {
 			const name = module.name;
 			const fileReference = new FileReference(name, module.built, module.size);
-			fileReference.assets = this.collectAssets(module.assets);
-			fileReference.reasons = this.collectReasons(module.reasons);
+			fileReference.assets = FileCollector.collectAssets(module.assets);
+			fileReference.reasons = FileCollector.collectReasons(module.reasons);
 			this.collectModules(module.modules);
 			if (name.startsWith("./node_modules/")) {
 				this.files.modules.push(fileReference);
@@ -52,28 +75,5 @@ export class FileCollector {
 				this.files.unknown.push(fileReference);
 			}
 		}
-	}
-
-	private collectAssets(assets: any[]): AssetReference[] {
-		if (assets === undefined || (!(assets instanceof Array))) {
-			return [];
-		}
-		const result = [];
-		for (const asset of assets) {
-			// TODO Maybe include some more info
-			result.push(new AssetReference(asset.name, asset.emitted, asset.size));
-		}
-		return result;
-	}
-
-	private collectReasons(reasons: any[]): Reason[] {
-		if (reasons === undefined || (!(reasons instanceof Array))) {
-			return [];
-		}
-		const result = [];
-		for (const reason of reasons) {
-			result.push(new Reason(reason.moduleName, reason.moduleIdentifier));
-		}
-		return result;
 	}
 }

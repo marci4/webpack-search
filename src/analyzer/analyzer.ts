@@ -2,6 +2,7 @@ import * as fs from "fs";
 import {Configuration} from "../configuration/configuration";
 import {Result} from "../results/result";
 import {FileCollector} from "./filecollector";
+import {PackageCollector} from "./packageCollector";
 
 export class Analyzer {
 
@@ -16,7 +17,7 @@ export class Analyzer {
 		if (!fileCollector.filesFound()) {
 			return result;
 		}
-
+		const packages = PackageCollector.collectPackages(fileCollector);
 		return result;
 	}
 

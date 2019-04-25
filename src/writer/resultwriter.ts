@@ -10,6 +10,9 @@ export class ResultWriter {
 	}
 
 	private static getData(configuration: Configuration, result: Result): string {
+		if (configuration.extractLicenses) {
+			// TODO
+		}
 		return JSON.stringify(result);
 	}
 }
