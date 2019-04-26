@@ -1,6 +1,10 @@
 import * as fs from "fs";
-import {Configuration} from "./configuration/configuration";
-import {Result} from "./results/result";
+import {Configuration} from "../configuration/configuration";
+import {Result} from "../results/result";
+import {FileCollector} from "./filecollector";
+import {LicenseCollector} from "./licenseCollector";
+import {PackageCollector} from "./packageCollector";
+import {PackageLockCollector} from "./packageLockCollector";
 
 export class Analyzer {
 
@@ -11,6 +15,13 @@ export class Analyzer {
 		if (result.errors.length !== 0) {
 			return result;
 		}
+		const fileCollector = new FileCollector(json);
+		if (!fileCollector.filesFound()) {
+			return result;
+		}
+		result.packages = PackageCollector.collectPackages(fileCollector);
+		result.licenses = LicenseCollector.collectLicenses(fileCollector);
+		result.packageLocks = PackageLockCollector.collectPackageLocks(configuration);
 		return result;
 	}
 

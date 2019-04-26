@@ -1,10 +1,13 @@
-import {Assets} from "./assets";
-import {Licenses} from "./licenses";
+import {LicenseInformation} from "./licenseInformation";
+import {PackageInformation} from "./packageInformation";
+import {PackageLockInformation} from "./packageLockInformation";
 
 export class Result {
-	public errors: Error[];
+	public errors: Error[] = [];
 
-	public licenses: Licenses;
+	public packages: PackageInformation[] = [];
 
-	public assets: Assets;
+	public licenses: LicenseInformation[] = [];
+
+	public packageLocks: PackageLockInformation[] = [];
 }

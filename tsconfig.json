@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES5",
+    "outDir": "dist",
+    "noImplicitAny": true,
+    "noUnusedParameters": true,
+    "moduleResolution": "node",
+    "noImplicitReturns": true,
+    "allowJs": false,
+    "removeComments": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": "src"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}

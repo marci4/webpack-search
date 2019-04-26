@@ -1,41 +1,55 @@
 import * as yargs from "yargs";
-import {Analyzer} from "./analyzer";
+import {Analyzer} from "./analyzer/analyzer";
 import {Configuration} from "./configuration/configuration";
 import {Constants} from "./configuration/constants";
-import {Writer} from "./writer/writer";
+import {Exporter} from "./exporter/exporter";
 
-export async function main(argv?: string[]) {
+export async function main(argv: string[]) {
 
 	const arg = yargs
 		.option(Constants.WORKINGDIRECTORY, {
 			demand: true,
-			desc: "Please specify the <working directory> of the result json.",
+			desc: "Please specify the <working directory> of the exporter json.",
 			type: "string",
 		})
 		.option(Constants.RESULT, {
 			demand: true,
-			desc: "Please specify where to write the json containing the result.",
+			desc: "Please specify where to write the json containing the exporter.",
 			type: "string",
 		})
 		.option(Constants.STATS, {
 			demand: true,
-			desc: "Please specify the path to the statistic json <stats.json>",
+			desc: "Please specify the path to the statistic json <stats.json>.",
 			type: "string",
 		})
 		.option(Constants.EXTRACTLICENSES, {
 			default: true,
-			demand: "false",
-			desc: "Extract all licenses",
+			demand: false,
+			desc: "Extract all licenses.",
 			type: "boolean",
 		})
+		.option(Constants.EXTRACTPACKAGES, {
+			default: false,
+			demand: false,
+			desc: "Extract the referenced packages to the --" + Constants.PACKAGEOUTPUT + " path.",
+			type: "boolean",
+		})
+		.option(Constants.PACKAGEOUTPUT, {
+			default: null,
+			defaultDescription: "<working directory>/packages",
+			demand: false,
+			desc: "Specific folder where the extracted packages should be exported. Enforces " + Constants.EXTRACTPACKAGES + ".",
+			type: "string",
+		})
 		.help();
+	let yargsResult = null;
 	try {
-		arg.parse((argv || process.argv).slice(2));
+		yargsResult =  arg.parse((argv).slice(2));
 	} catch (err) {
 		console.error(err);
 		process.exit(1);
 	}
-	const config = new Configuration(arg);
+	const config = new Configuration(yargsResult);
 	const result = Analyzer.analyze(config);
-	Writer.writeResult(config, result);
+	Exporter.exportResults(config, result);
 }
