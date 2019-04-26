@@ -4,6 +4,7 @@ import {Result} from "../results/result";
 import {FileCollector} from "./filecollector";
 import {LicenseCollector} from "./licenseCollector";
 import {PackageCollector} from "./packageCollector";
+import {PackageLockCollector} from "./packageLockCollector";
 
 export class Analyzer {
 
@@ -20,6 +21,7 @@ export class Analyzer {
 		}
 		result.packages = PackageCollector.collectPackages(fileCollector);
 		result.licenses = LicenseCollector.collectLicenses(fileCollector);
+		result.packageLocks = PackageLockCollector.collectPackageLocks(configuration);
 		return result;
 	}
 

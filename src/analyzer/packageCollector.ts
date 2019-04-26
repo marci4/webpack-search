@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as path from "path";
 import {Author} from "../results/author";
 import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
@@ -25,7 +26,7 @@ export class PackageCollector {
 	private static extractPackageInfo(currentFolder: string): PackageInformation {
 		if (fs.existsSync(currentFolder)) {
 			if (fs.lstatSync(currentFolder).isDirectory()) {
-				const packagePath = currentFolder + "\\package.json";
+				const packagePath = path.join(currentFolder, "package.json");
 				if (fs.existsSync(packagePath)) {
 					const json = JSON.parse(fs.readFileSync(packagePath, "utf8"));
 					const author = Author.parse(json.author);

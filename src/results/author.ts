@@ -1,6 +1,10 @@
 export class Author {
 
-	public static parse(author: any): Author {
+	/**
+	 * Try to parse the input provided by the package.json
+	 * @param author {string|any}
+	 */
+	public static parse(author: string|any): Author {
 		if (author === null || author === undefined) {
 			return null;
 		}
