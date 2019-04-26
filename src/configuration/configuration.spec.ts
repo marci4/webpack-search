@@ -2,7 +2,7 @@ import {Argv} from "yargs";
 import {Configuration} from "./configuration";
 import {Constants} from "./constants";
 
-const mock = [];
+const mock: any = [];
 mock[Constants.EXTRACTLICENSES] = true;
 mock[Constants.STATS] = "/tmp/stats.json";
 mock[Constants.RESULT] = "arg/result.txt";
