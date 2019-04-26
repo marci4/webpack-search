@@ -13,4 +13,10 @@ describe("Values", () => {
 	it("Stat", () => {
 		expect(Constants.STATS).toEqual("stats");
 	});
+	it("Eackage Output", () => {
+		expect(Constants.PACKAGEOUTPUT).toEqual("packageOutput");
+	});
+	it("Extract Packackges", () => {
+		expect(Constants.EXTRACTPACKAGES).toEqual("extractPackackges");
+	});
 });
