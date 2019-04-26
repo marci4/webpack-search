@@ -15,7 +15,7 @@ stages:
 install:
   stage: install
   script: 
-    - npm install
+    - npm ci
 
 lint:
   stage: lint
