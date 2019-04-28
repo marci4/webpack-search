@@ -9,7 +9,7 @@ export class LicenseInformation {
 	 * Which files are referenced by this license
 	 */
 	public readonly fileReferences: FileReference[] = [];
-	private licenseContent: string;
+	private licenseContent: string = null;
 
 	public get licenseText(): string {
 		return this.licenseContent;
@@ -23,7 +23,9 @@ export class LicenseInformation {
 
 	private extractInformation(): void {
 		if (this.licensePath !== null) {
-			this.licenseContent = fs.readFileSync(this.licensePath, "utf8");
+			if (fs.existsSync(this.licensePath)) {
+				this.licenseContent = fs.readFileSync(this.licensePath, "utf8");
+			}
 		}
 	}
 }

@@ -7,8 +7,5 @@ export class Files {
 
 	public readonly unknown: FileReference[] = [];
 
-	// TODO report   "angularCompilerOptions": {
-	//     "skipTemplateCodegen": true
-	//   }
 	public readonly nonExisting: FileReference[] = [];
 }
