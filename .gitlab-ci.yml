@@ -11,6 +11,7 @@ stages:
   - lint
   - build
   - test
+  - pages
 
 install:
   stage: install
@@ -31,3 +32,19 @@ test:
   stage: test
   script:
    - npm run test
+  artifacts:
+    paths:
+      - coverage/
+
+pages:
+  stage: pages
+  dependencies:
+    - test
+  script:
+    - mv coverage/ public/
+  artifacts:
+    paths:
+      - public
+    expire_in: 30 days
+  only:
+    - master
