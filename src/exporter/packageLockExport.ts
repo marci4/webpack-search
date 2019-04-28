@@ -24,10 +24,10 @@ export class PackageLockExport {
 				return packageReference.name === packageLockEntry.name && packageReference.version === packageLockEntry.version;
 			});
 			if (packageLockInfo === undefined) {
-				// tslint:disable-next-line:max-line-length
+				//
 				result.errors.push(new Error("Could not find the referenced package in the package-lock.json. Name: " + packageReference.name + " Version: " + packageReference.version));
 			} else {
-				// tslint:disable-next-line:max-line-length
+				//
 				this.downloadFile(packageLockInfo.resolvedPath, path.join(directory, path.basename(packageLockInfo.resolvedPath)), (error) => {
 					if (error !== null) {
 						result.errors.push(error);
