@@ -46,7 +46,6 @@ export class PackageCollector {
 					// Angular material has some package.json without any info, so lets go deeper.
 					return false;
 				}
-				// tslint:disable-next-line:max-line-length
 				existingPackageInfo = packageData.find((packageEntry) => packageEntry.name === packageInfo.name && packageEntry.version === packageInfo.version);
 				if (existingPackageInfo !== undefined) {
 					existingPackageInfo.files.push(file);

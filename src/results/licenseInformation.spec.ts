@@ -25,7 +25,7 @@ describe("LicenseInformation", () => {
 	});
 	it("Constructor unknown licensePath", () => {
 		const file = new FileReference("file.name", true);
-		// tslint:disable-next-line:max-line-length
+		//
 		const licenseInformation = new LicenseInformation(path.join("test", "result", "licenseInformation", "license.txt"), file);
 		expect(licenseInformation.licenseText).toEqual("Test-License");
 	});

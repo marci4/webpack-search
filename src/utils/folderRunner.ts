@@ -5,7 +5,6 @@ import {FileReference} from "../results/fileReference";
 export class FolderRunner {
 
 	// Since we only use chunk.modules here, we only get ./node_modules
-	// tslint:disable-next-line:max-line-length
 	public static checkFolder(file: FileReference, currentFilePath: string, callback: (currentFolder: string) => boolean): boolean {
 		const currentFolder = path.resolve(currentFilePath);
 		if (currentFilePath === "./node_modules") {
