@@ -1,4 +1,4 @@
-import * as path from "path";
+import * as fs from "fs";
 import {Constants} from "./constants";
 
 export class Configuration {
@@ -6,19 +6,29 @@ export class Configuration {
 	public readonly statsJsonPath: string;
 	public readonly resultJsonPath: string;
 	public readonly extractLicenses: boolean;
-	public readonly extractPackages: boolean;
 	public readonly packageOutput: string;
+
 	constructor(args: any) {
 		this.extractLicenses = args[Constants.EXTRACTLICENSES];
 		this.statsJsonPath = args[Constants.STATS];
 		this.workingDirectoryPath = args[Constants.WORKINGDIRECTORY];
 		this.resultJsonPath = args[Constants.RESULT];
-		this.extractPackages = args[Constants.EXTRACTPACKAGES];
 		this.packageOutput = args[Constants.PACKAGEOUTPUT];
-		if (this.packageOutput === null) {
-			this.packageOutput = path.join(this.workingDirectoryPath, "packages");
-		} else {
-			this.extractPackages = true;
+	}
+
+	public isValid(): Error | null {
+		if (!fs.existsSync(this.statsJsonPath) || fs.lstatSync(this.statsJsonPath).isDirectory()) {
+			return Error("Unknown path: Type: " + Constants.STATS + " Path: " + this.statsJsonPath);
 		}
+		if (fs.existsSync(this.resultJsonPath)  && fs.lstatSync(this.resultJsonPath).isDirectory()) {
+			return Error("Unknown path: Type: " + Constants.RESULT + " Path: " + this.resultJsonPath);
+		}
+		if (!fs.existsSync(this.workingDirectoryPath) || !fs.lstatSync(this.workingDirectoryPath).isDirectory()) {
+			return Error("Unknown path: Type: " + Constants.WORKINGDIRECTORY + " Path: " + this.workingDirectoryPath);
+		}
+		if (this.packageOutput !== null && (fs.existsSync(this.packageOutput) && !fs.lstatSync(this.packageOutput).isDirectory())) {
+			return Error("Unknown path: Type: " + Constants.PACKAGEOUTPUT + " Path: " + this.packageOutput);
+		}
+		return null;
 	}
 }

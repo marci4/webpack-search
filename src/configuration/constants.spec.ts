@@ -16,7 +16,4 @@ describe("Values", () => {
 	it("Eackage Output", () => {
 		expect(Constants.PACKAGEOUTPUT).toEqual("packageOutput");
 	});
-	it("Extract Packackges", () => {
-		expect(Constants.EXTRACTPACKAGES).toEqual("extractPackackges");
-	});
 });
