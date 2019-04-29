@@ -28,17 +28,11 @@ export async function main(argv: string[]) {
 			desc: "Extract all licenses.",
 			type: "boolean",
 		})
-		.option(Constants.EXTRACTPACKAGES, {
-			default: false,
-			demand: false,
-			desc: "Extract the referenced packages to the --" + Constants.PACKAGEOUTPUT + " path.",
-			type: "boolean",
-		})
 		.option(Constants.PACKAGEOUTPUT, {
 			default: null,
 			defaultDescription: "<working directory>/packages",
 			demand: false,
-			desc: "Specific folder where the extracted packages should be exported. Enforces " + Constants.EXTRACTPACKAGES + ".",
+			desc: "Specific folder where the extracted packages should be exported.",
 			type: "string",
 		})
 		.help();
@@ -46,10 +40,14 @@ export async function main(argv: string[]) {
 	try {
 		yargsResult =  arg.parse((argv).slice(2));
 	} catch (err) {
-		console.error(err);
-		process.exit(1);
+		throw err;
 	}
 	const config = new Configuration(yargsResult);
-	const result = Analyzer.analyze(config);
-	Exporter.exportResults(config, result);
+	const error = config.isValid();
+	if (error === null) {
+		const result = Analyzer.analyze(config);
+		Exporter.exportResults(config, result);
+	} else {
+		throw error;
+	}
 }

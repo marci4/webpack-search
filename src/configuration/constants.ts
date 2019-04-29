@@ -4,6 +4,4 @@ export enum Constants {
 	RESULT = "result",
 	STATS = "stats",
 	PACKAGEOUTPUT = "packageOutput",
-	EXTRACTPACKAGES = "extractPackackges",
-
 }

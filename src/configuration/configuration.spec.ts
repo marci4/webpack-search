@@ -8,30 +8,83 @@ mock[Constants.EXTRACTLICENSES] = true;
 mock[Constants.STATS] = "/tmp/stats.json";
 mock[Constants.RESULT] = "arg/exporter.txt";
 mock[Constants.WORKINGDIRECTORY] = "/home";
-describe("constructor", () => {
-	it("Extract from yargs", () => {
-		mock[Constants.EXTRACTPACKAGES] = true;
-		mock[Constants.PACKAGEOUTPUT] = "/tmp/packages";
-		const configuration = new Configuration(mock as unknown as Argv);
-		expect(configuration.statsJsonPath).toEqual(mock[Constants.STATS]);
-		expect(configuration.resultJsonPath).toEqual(mock[Constants.RESULT]);
-		expect(configuration.extractLicenses).toEqual(mock[Constants.EXTRACTLICENSES]);
-		expect(configuration.workingDirectoryPath).toEqual(mock[Constants.WORKINGDIRECTORY]);
-		expect(configuration.extractPackages).toEqual(mock[Constants.EXTRACTPACKAGES]);
-		expect(configuration.packageOutput).toEqual(mock[Constants.PACKAGEOUTPUT]);
+describe("Configuration", () => {
+	describe("constructor", () => {
+		it("Extract from yargs", () => {
+			mock[Constants.PACKAGEOUTPUT] = "/tmp/packages";
+			const configuration = new Configuration(mock as unknown as Argv);
+			expect(configuration.statsJsonPath).toEqual(mock[Constants.STATS]);
+			expect(configuration.resultJsonPath).toEqual(mock[Constants.RESULT]);
+			expect(configuration.extractLicenses).toEqual(mock[Constants.EXTRACTLICENSES]);
+			expect(configuration.workingDirectoryPath).toEqual(mock[Constants.WORKINGDIRECTORY]);
+			expect(configuration.packageOutput).toEqual(mock[Constants.PACKAGEOUTPUT]);
+		});
+		it("Update when extractPackages is effective", () => {
+			mock[Constants.PACKAGEOUTPUT] = null;
+			const configuration = new Configuration(mock as unknown as Argv);
+			expect(configuration.packageOutput).toBeNull();
+		});
+		it("Update when packageOutput is provided", () => {
+			mock[Constants.PACKAGEOUTPUT] = "/tmp/packages";
+			const configuration = new Configuration(mock as unknown as Argv);
+			expect(configuration.packageOutput).toEqual(mock[Constants.PACKAGEOUTPUT]);
+		});
 	});
-	it("Update when extractPackages is effective", () => {
-		mock[Constants.EXTRACTPACKAGES] = true;
-		mock[Constants.PACKAGEOUTPUT] = null;
-		const configuration = new Configuration(mock as unknown as Argv);
-		expect(configuration.extractPackages).toEqual(mock[Constants.EXTRACTPACKAGES]);
-		expect(configuration.packageOutput).toEqual(path.join(mock[Constants.WORKINGDIRECTORY], "packages"));
-	});
-	it("Update when packageOutput is provided", () => {
-		mock[Constants.EXTRACTPACKAGES] = false;
-		mock[Constants.PACKAGEOUTPUT] = "/tmp/packages";
-		const configuration = new Configuration(mock as unknown as Argv);
-		expect(configuration.extractPackages).toEqual(true);
-		expect(configuration.packageOutput).toEqual(mock[Constants.PACKAGEOUTPUT]);
+	describe("isValid", () => {
+		it("invalid statsJsonPath", () => {
+			const localMock: any = [];
+			localMock[Constants.STATS] = "/tmp/stats.json";
+			localMock[Constants.RESULT] = "/tmp/result.json";
+			localMock[Constants.WORKINGDIRECTORY] = "/home";
+			let configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: stats Path: " + localMock[Constants.STATS]);
+			localMock[Constants.STATS] = path.join("test", "configuration");
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: stats Path: " + localMock[Constants.STATS]);
+			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: workingDirectory Path: " + localMock[Constants.WORKINGDIRECTORY]);
+		});
+		it("invalid resultJsonPath", () => {
+			const localMock: any = [];
+			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
+			localMock[Constants.WORKINGDIRECTORY] = "/home";
+			localMock[Constants.RESULT] = path.join("test", "configuration");
+			let configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: result Path: " + localMock[Constants.RESULT]);
+			localMock[Constants.RESULT] = path.join("test", "configuration", "result.json");
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: workingDirectory Path: " + localMock[Constants.WORKINGDIRECTORY]);
+		});
+		it("invalid working Directory", () => {
+			const localMock: any = [];
+			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
+			localMock[Constants.RESULT] = path.join("test", "configuration", "result.json");
+			localMock[Constants.WORKINGDIRECTORY] = "/home";
+			localMock[Constants.PACKAGEOUTPUT] = null;
+			let configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: workingDirectory Path: " + localMock[Constants.WORKINGDIRECTORY]);
+			localMock[Constants.WORKINGDIRECTORY] = path.join("test", "configuration", "result.json");
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: workingDirectory Path: " + localMock[Constants.WORKINGDIRECTORY]);
+			localMock[Constants.WORKINGDIRECTORY] = path.join("test", "configuration");
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid()).toBeNull();
+		});
+		it("invalid package output", () => {
+			const localMock: any = [];
+			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
+			localMock[Constants.RESULT] = path.join("test", "configuration", "result.json");
+			localMock[Constants.WORKINGDIRECTORY] = path.join("test", "configuration");
+			localMock[Constants.PACKAGEOUTPUT] = path.join("test", "configuration", "stats.json");
+			let configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: packageOutput Path: " + localMock[Constants.PACKAGEOUTPUT]);
+			localMock[Constants.PACKAGEOUTPUT] = null;
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid()).toBeNull();
+			localMock[Constants.PACKAGEOUTPUT] = path.join("test", "configuration");
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid()).toBeNull();
+		});
 	});
 });

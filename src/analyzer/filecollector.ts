@@ -98,16 +98,6 @@ export class FileCollector {
 				this.files.src.push(fileReference);
 			}
 		} else {
-			if (fileReference.name.startsWith("multi")) {
-				const name = fileReference.name.substr("multi ".length);
-				for (const subName of name.split(" ")) {
-					const subFileReference = new FileReference(subName, fileReference.built);
-					subFileReference.assets = fileReference.assets;
-					subFileReference.reasons = fileReference.reasons;
-					this.addFileReferencetoFiles(subFileReference);
-				}
-				return;
-			}
 			// TODO Better handle multi & css
 			this.files.unknown.push(fileReference);
 		}
