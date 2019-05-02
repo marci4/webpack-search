@@ -1,3 +1,11 @@
+/*
+ Copyright (c) 2019 Marcel Prestel
+ "THE BEER-WARE LICENSE" (Revision 42):
+ <admin@marci4.de> wrote this file. As long as you retain this notice you
+ can do whatever you want with this stuff. If we meet some day, and you think
+ this stuff is worth it, you can buy me a beer in return.
+ */
+
 import * as yargs from "yargs";
 import {Analyzer} from "./analyzer/analyzer";
 import {Configuration} from "./configuration/configuration";
@@ -38,7 +46,7 @@ export async function main(argv: string[]): Promise<void> {
 		.help();
 	let yargsResult = null;
 	try {
-		yargsResult =  arg.parse((argv).slice(2));
+		yargsResult = arg.parse((argv).slice(2));
 	} catch (err) {
 		return Promise.reject(err);
 	}

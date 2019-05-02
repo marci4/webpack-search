@@ -1,5 +1,10 @@
 {
   "name": "webpack-analyzer",
+  "author": {
+    "name": "Marcel Prestel",
+    "email": "admin@marci4.de"
+  },
+  "license": "Beerware",
   "bin": "./cli.js",
   "dependencies": {
     "yargs": "^6.5.0",
