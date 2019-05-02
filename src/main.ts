@@ -4,7 +4,7 @@ import {Configuration} from "./configuration/configuration";
 import {Constants} from "./configuration/constants";
 import {Exporter} from "./exporter/exporter";
 
-export async function main(argv: string[]) {
+export async function main(argv: string[]): Promise<void> {
 
 	const arg = yargs
 		.option(Constants.WORKINGDIRECTORY, {
@@ -40,7 +40,7 @@ export async function main(argv: string[]) {
 	try {
 		yargsResult =  arg.parse((argv).slice(2));
 	} catch (err) {
-		throw err;
+		return Promise.reject(err);
 	}
 	const config = new Configuration(yargsResult);
 	const error = config.isValid();
@@ -48,6 +48,7 @@ export async function main(argv: string[]) {
 		const result = Analyzer.analyze(config);
 		Exporter.exportResults(config, result);
 	} else {
-		throw error;
+		return Promise.reject(error);
 	}
+	return Promise.resolve();
 }

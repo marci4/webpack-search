@@ -30,7 +30,9 @@ export class LicenseCollector {
 			for (const licensePath of licensePaths) {
 				existingLicenseInfo = licenseData.find((licenseEntry) => licenseEntry.licensePath === licensePath);
 				if (existingLicenseInfo !== undefined) {
-					existingLicenseInfo.fileReferences.push(file);
+					if (!existingLicenseInfo.fileReferences.find((referencedFiles) => referencedFiles.name === file.name)) {
+						existingLicenseInfo.fileReferences.push(file);
+					}
 				} else {
 					const licenseInfo = new LicenseInformation(licensePath, file);
 					licenseData.push(licenseInfo);

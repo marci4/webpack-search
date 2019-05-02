@@ -7,7 +7,7 @@ const mock: any = [];
 mock[Constants.EXTRACTLICENSES] = true;
 mock[Constants.STATS] = "/tmp/stats.json";
 mock[Constants.RESULT] = "arg/exporter.txt";
-mock[Constants.WORKINGDIRECTORY] = "/home";
+mock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 describe("Configuration", () => {
 	describe("constructor", () => {
 		it("Extract from yargs", () => {
@@ -35,7 +35,7 @@ describe("Configuration", () => {
 			const localMock: any = [];
 			localMock[Constants.STATS] = "/tmp/stats.json";
 			localMock[Constants.RESULT] = "/tmp/result.json";
-			localMock[Constants.WORKINGDIRECTORY] = "/home";
+			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 			let configuration = new Configuration(localMock as unknown as Argv);
 			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: stats Path: " + localMock[Constants.STATS]);
 			localMock[Constants.STATS] = path.join("test", "configuration");
@@ -48,7 +48,7 @@ describe("Configuration", () => {
 		it("invalid resultJsonPath", () => {
 			const localMock: any = [];
 			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
-			localMock[Constants.WORKINGDIRECTORY] = "/home";
+			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 			localMock[Constants.RESULT] = path.join("test", "configuration");
 			let configuration = new Configuration(localMock as unknown as Argv);
 			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: result Path: " + localMock[Constants.RESULT]);
@@ -60,7 +60,7 @@ describe("Configuration", () => {
 			const localMock: any = [];
 			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
 			localMock[Constants.RESULT] = path.join("test", "configuration", "result.json");
-			localMock[Constants.WORKINGDIRECTORY] = "/home";
+			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 			localMock[Constants.PACKAGEOUTPUT] = null;
 			let configuration = new Configuration(localMock as unknown as Argv);
 			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: workingDirectory Path: " + localMock[Constants.WORKINGDIRECTORY]);
