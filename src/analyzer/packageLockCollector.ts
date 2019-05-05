@@ -11,13 +11,10 @@ import * as path from "path";
 import {Configuration} from "../configuration/configuration";
 import {PackageLockInformation} from "../results/packageLockInformation";
 
-export class PackageLockCollector {
+export namespace PackageLockCollector {
 
-	public static collectPackageLocks(configuration: Configuration): PackageLockInformation[] {
-		return this.extractPackageLockInfos(configuration.workingDirectoryPath);
-	}
-
-	private static extractPackageLockInfos(workingDirectory: string): PackageLockInformation[] {
+	export function collectPackageLocks(configuration: Configuration): PackageLockInformation[] {
+		const workingDirectory = configuration.workingDirectoryPath;
 		const result: PackageLockInformation[] = [];
 		if (fs.existsSync(workingDirectory)) {
 			if (fs.lstatSync(workingDirectory).isDirectory()) {
