@@ -4,6 +4,6 @@
         "tslint:recommended"
     ],
     "jsRules": {},
-    "rules": {"indent": [true, "tabs", 2], "no-console": [true, "log"], "max-line-length": false},
+    "rules": {"indent": [true, "tabs", 2], "no-console": [true, "log"], "max-line-length": false, "no-namespace": false},
     "rulesDirectory": []
 }

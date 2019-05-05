@@ -6,12 +6,13 @@
  this stuff is worth it, you can buy me a beer in return.
  */
 
+import {ErrorMessage} from "./errorMessage";
 import {LicenseInformation} from "./licenseInformation";
 import {PackageInformation} from "./packageInformation";
 import {PackageLockInformation} from "./packageLockInformation";
 
 export class Result {
-	public errors: Error[] = [];
+	public errors: ErrorMessage[] = [];
 
 	public packages: PackageInformation[] = [];
 

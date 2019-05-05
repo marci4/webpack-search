@@ -10,12 +10,13 @@ import * as fs from "fs";
 import * as path from "path";
 import * as request from "request";
 import {Configuration} from "../configuration/configuration";
+import {ErrorMessage} from "../results/errorMessage";
 import {Result} from "../results/result";
 
-export class PackageLockExport {
+export namespace PackageLockExport {
 
-	public static exportReferencedPackages(configuration: Configuration, result: Result): void {
-		const directory = configuration.packageOutput;
+	export function exportReferencedPackages(config: Configuration, result: Result): void {
+		const directory = config.packageOutput;
 		if (!fs.existsSync(directory)) {
 			fs.mkdirSync(directory);
 		} else {
@@ -25,18 +26,19 @@ export class PackageLockExport {
 			}
 		}
 		for (const packageReference of result.packages) {
-			if (packageReference.name === null && packageReference.version === null) {
+			if (packageReference.name === null || packageReference.version === null) {
+				result.errors.push(new ErrorMessage("Referenced package is null. Name: " + packageReference.name + " Version: " + packageReference.version));
 				continue;
 			}
 			const packageLockInfo = result.packageLocks.find((packageLockEntry) => {
 				return packageReference.name === packageLockEntry.name && packageReference.version === packageLockEntry.version;
 			});
 			if (packageLockInfo === undefined) {
-				//
-				result.errors.push(new Error("Could not find the referenced package in the package-lock.json. Name: " + packageReference.name + " Version: " + packageReference.version));
+				result.errors.push(new ErrorMessage("Could not find the referenced package in the package-lock.json. Name: " + packageReference.name + " Version: " + packageReference.version));
+				continue;
 			} else {
 				//
-				this.downloadFile(packageLockInfo.resolvedPath, path.join(directory, path.basename(packageLockInfo.resolvedPath)), (error) => {
+				this.downloadFile(packageLockInfo.resolvedPath, path.join(directory, path.basename(packageLockInfo.resolvedPath)), (error: ErrorMessage) => {
 					if (error !== null) {
 						result.errors.push(error);
 					}
@@ -45,14 +47,14 @@ export class PackageLockExport {
 		}
 	}
 
-	private static downloadFile(url: string, dest: string, callback: (error: Error) => void): void {
+	export function downloadFile(url: string, dest: string, callback: (error: ErrorMessage) => void): void {
 		const file = fs.createWriteStream(dest);
 		const sendReq = request.get(url);
 
 		// verify response code
 		sendReq.on("response", (response) => {
 			if (response.statusCode !== 200) {
-				return callback(new Error("Response status was " + response.statusCode));
+				return callback(new ErrorMessage("Response status was " + response.statusCode));
 			}
 
 			sendReq.pipe(file);

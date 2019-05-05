@@ -14,13 +14,10 @@ import {LicenseInformation} from "../results/licenseInformation";
 import {FolderRunner} from "../utils/folderRunner";
 import {FileCollector} from "./filecollector";
 
-export class LicenseCollector {
+export namespace LicenseCollector {
 
-	public static collectLicenses(fileCollector: FileCollector): LicenseInformation[] {
-		return this.collectLicensesFromModule(fileCollector.files);
-	}
-
-	private static collectLicensesFromModule(files: Files): LicenseInformation[] {
+	export function collectLicenses(fileCollector: FileCollector): LicenseInformation[] {
+		const files = fileCollector.files;
 		const result: LicenseInformation[] = [];
 		if (files.modules.length === 0) {
 			return result;
@@ -31,7 +28,7 @@ export class LicenseCollector {
 		return result;
 	}
 
-	private static checkFileReference(file: FileReference, name: string, licenseData: LicenseInformation[]): void {
+	export function checkFileReference(file: FileReference, name: string, licenseData: LicenseInformation[]): void {
 		if (!FolderRunner.checkFolder(file, name, ((currentFolder) => {
 			const licensePaths = LicenseCollector.checkForAdditionalLicenses(currentFolder);
 			let existingLicenseInfo: LicenseInformation = null;
@@ -57,7 +54,7 @@ export class LicenseCollector {
 		}
 	}
 
-	private static checkForAdditionalLicenses(searchPath: string): string[] {
+	export function checkForAdditionalLicenses(searchPath: string): string[] {
 		if (fs.existsSync(searchPath)) {
 			if (fs.lstatSync(searchPath).isDirectory()) {
 				const files = fs.readdirSync(searchPath);

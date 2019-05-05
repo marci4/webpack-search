@@ -42,6 +42,8 @@ describe("Configuration", () => {
 		it("invalid statsJsonPath", () => {
 			const localMock: any = [];
 			localMock[Constants.STATS] = "/tmp/stats.json";
+			localMock[Constants.PACKAGEOUTPUT] =  null;
+			localMock[Constants.EXTRACTLICENSES] = true;
 			localMock[Constants.RESULT] = "/tmp/result.json";
 			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 			let configuration = new Configuration(localMock as unknown as Argv);
@@ -55,6 +57,8 @@ describe("Configuration", () => {
 		});
 		it("invalid resultJsonPath", () => {
 			const localMock: any = [];
+			localMock[Constants.EXTRACTLICENSES] = true;
+			localMock[Constants.PACKAGEOUTPUT] =  null;
 			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
 			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 			localMock[Constants.RESULT] = path.join("test", "configuration");
@@ -66,6 +70,7 @@ describe("Configuration", () => {
 		});
 		it("invalid working Directory", () => {
 			const localMock: any = [];
+			localMock[Constants.EXTRACTLICENSES] = true;
 			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
 			localMock[Constants.RESULT] = path.join("test", "configuration", "result.json");
 			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
@@ -81,6 +86,7 @@ describe("Configuration", () => {
 		});
 		it("invalid package output", () => {
 			const localMock: any = [];
+			localMock[Constants.EXTRACTLICENSES] = true;
 			localMock[Constants.STATS] = path.join("test", "configuration", "stats.json");
 			localMock[Constants.RESULT] = path.join("test", "configuration", "result.json");
 			localMock[Constants.WORKINGDIRECTORY] = path.join("test", "configuration");
@@ -93,6 +99,26 @@ describe("Configuration", () => {
 			localMock[Constants.PACKAGEOUTPUT] = path.join("test", "configuration");
 			configuration = new Configuration(localMock as unknown as Argv);
 			expect(configuration.isValid()).toBeNull();
+		});
+		it("check for undefined", () => {
+			const localMock: any = [];
+			let configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: extractLicenses is undefined");
+			localMock[Constants.EXTRACTLICENSES] = null;
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: statsJsonPath is undefined");
+			localMock[Constants.STATS] = null;
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: workingDirectoryPath is undefined");
+			localMock[Constants.WORKINGDIRECTORY] = null;
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: resultJsonPath is undefined");
+			localMock[Constants.RESULT] = null;
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: packageOutput is undefined");
+			localMock[Constants.PACKAGEOUTPUT] = null;
+			configuration = new Configuration(localMock as unknown as Argv);
+			expect(configuration.isValid().toString()).toEqual("Error: Unknown path: Type: stats Path: null");
 		});
 	});
 });

@@ -11,9 +11,9 @@ import {Result} from "../results/result";
 import {PackageLockExport} from "./packageLockExport";
 import {ResultExport} from "./resultExport";
 
-export class Exporter {
+export namespace Exporter {
 
-	public static exportResults(configuration: Configuration, result: Result) {
+	export function exportResults(configuration: Configuration, result: Result) {
 		if (configuration.packageOutput !== null) {
 			PackageLockExport.exportReferencedPackages(configuration, result);
 		}

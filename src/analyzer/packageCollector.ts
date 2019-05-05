@@ -15,12 +15,9 @@ import {PackageInformation} from "../results/packageInformation";
 import {FolderRunner} from "../utils/folderRunner";
 import {FileCollector} from "./filecollector";
 
-export class PackageCollector {
-	public static collectPackages(fileCollector: FileCollector): PackageInformation[] {
-		return this.collectPackagesFromModule(fileCollector.files);
-	}
-
-	private static collectPackagesFromModule(files: Files): PackageInformation[] {
+export namespace PackageCollector {
+	export function collectPackages(fileCollector: FileCollector): PackageInformation[] {
+		const files = fileCollector.files;
 		const result: PackageInformation[] = [];
 		if (files.modules.length === 0) {
 			return result;
@@ -31,7 +28,7 @@ export class PackageCollector {
 		return result;
 	}
 
-	private static extractPackageInfo(currentFolder: string): PackageInformation {
+	export function extractPackageInfo(currentFolder: string): PackageInformation {
 		if (fs.existsSync(currentFolder)) {
 			if (fs.lstatSync(currentFolder).isDirectory()) {
 				const packagePath = path.join(currentFolder, "package.json");
@@ -45,7 +42,7 @@ export class PackageCollector {
 		return null;
 	}
 
-	private static checkFileReference(file: FileReference, name: string, packageData: PackageInformation[]): void {
+	export function checkFileReference(file: FileReference, name: string, packageData: PackageInformation[]): void {
 		if (!FolderRunner.checkFolder(file, name, ((currentFolder) => {
 			const packageInfo = PackageCollector.extractPackageInfo(currentFolder);
 			let existingPackageInfo = null;

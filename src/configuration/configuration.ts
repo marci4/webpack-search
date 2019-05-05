@@ -25,10 +25,25 @@ export class Configuration {
 	}
 
 	public isValid(): Error | null {
+		if (this.extractLicenses === undefined) {
+			return Error("extractLicenses is undefined");
+		}
+		if (this.statsJsonPath === undefined) {
+			return Error("statsJsonPath is undefined");
+		}
+		if (this.workingDirectoryPath === undefined) {
+			return Error("workingDirectoryPath is undefined");
+		}
+		if (this.resultJsonPath === undefined) {
+			return Error("resultJsonPath is undefined");
+		}
+		if (this.packageOutput === undefined) {
+			return Error("packageOutput is undefined");
+		}
 		if (!fs.existsSync(this.statsJsonPath) || fs.lstatSync(this.statsJsonPath).isDirectory()) {
 			return Error("Unknown path: Type: " + Constants.STATS + " Path: " + this.statsJsonPath);
 		}
-		if (fs.existsSync(this.resultJsonPath)  && fs.lstatSync(this.resultJsonPath).isDirectory()) {
+		if (fs.existsSync(this.resultJsonPath) && fs.lstatSync(this.resultJsonPath).isDirectory()) {
 			return Error("Unknown path: Type: " + Constants.RESULT + " Path: " + this.resultJsonPath);
 		}
 		if (!fs.existsSync(this.workingDirectoryPath) || !fs.lstatSync(this.workingDirectoryPath).isDirectory()) {

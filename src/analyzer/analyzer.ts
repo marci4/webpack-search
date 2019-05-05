@@ -8,18 +8,29 @@
 
 import * as fs from "fs";
 import {Configuration} from "../configuration/configuration";
+import {ErrorMessage} from "../results/errorMessage";
 import {Result} from "../results/result";
 import {FileCollector} from "./filecollector";
 import {LicenseCollector} from "./licenseCollector";
 import {PackageCollector} from "./packageCollector";
 import {PackageLockCollector} from "./packageLockCollector";
 
-export class Analyzer {
+export namespace Analyzer {
 
-	public static analyze(configuration: Configuration): Result {
+	export function analyze(configuration: Configuration): Result {
 		const result = new Result();
-		Analyzer.setWorkingDirectory(configuration, result);
-		const json = Analyzer.readStatsJson(configuration, result);
+		if (!fs.existsSync(configuration.workingDirectoryPath)) {
+			result.errors.push(new ErrorMessage("Invalid working directory: ${configuration.workingDirectoryPath}"));
+		}
+		// Update the working directory to fit for the specific stats.json
+		process.chdir(configuration.workingDirectoryPath);
+		let json;
+		try {
+			json = JSON.parse(fs.readFileSync(configuration.statsJsonPath, "utf8"));
+		} catch (e) {
+			result.errors.push(new ErrorMessage("Invalid file: ${file}"));
+			return null;
+		}
 		if (result.errors.length !== 0) {
 			return result;
 		}
@@ -31,24 +42,5 @@ export class Analyzer {
 		result.licenses = LicenseCollector.collectLicenses(fileCollector);
 		result.packageLocks = PackageLockCollector.collectPackageLocks(configuration);
 		return result;
-	}
-
-	private static setWorkingDirectory(configuration: Configuration, result: Result): void {
-		if (!fs.existsSync(configuration.workingDirectoryPath)) {
-			result.errors.push(new Error("Invalid working directory: ${configuration.workingDirectoryPath}"));
-		}
-		// Update the working directory to fit for the specific stats.json
-		process.chdir(configuration.workingDirectoryPath);
-	}
-
-	private static readStatsJson(configuration: Configuration, result: Result): any {
-		let json;
-		try {
-			json = JSON.parse(fs.readFileSync(configuration.statsJsonPath, "utf8"));
-		} catch (e) {
-			result.errors.push(new Error("Invalid file: ${file}"));
-			return null;
-		}
-		return json;
 	}
 }
