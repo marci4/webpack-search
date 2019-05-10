@@ -1,9 +1,27 @@
 {
-    "defaultSeverity": "error",
-    "extends": [
-        "tslint:recommended"
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "indent": [
+      true,
+      "tabs",
+      2
     ],
-    "jsRules": {},
-    "rules": {"indent": [true, "tabs", 2], "no-console": [true, "log"], "max-line-length": false, "no-namespace": false},
-    "rulesDirectory": []
+    "no-console": [
+      true,
+      "log"
+    ],
+    "max-line-length": false,
+    "no-namespace": false,
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore"
+    ]
+  },
+  "rulesDirectory": []
 }

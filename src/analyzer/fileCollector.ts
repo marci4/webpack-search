@@ -47,7 +47,7 @@ export class FileCollector {
 
 	private collectFiles(json: any): void {
 		this.collectChunks(json.chunks);
-		if (json.children !== undefined || (!(json.children instanceof Array))) {
+		if (json.children !== undefined && (json.children instanceof Array)) {
 			for (const child of json.children) {
 				this.collectFiles(child);
 			}
@@ -55,18 +55,19 @@ export class FileCollector {
 		this.collectModules(json.modules);
 	}
 
-	private collectChunks(chunks: any[]): void {
+	private collectChunks(chunks: any[]): boolean {
 		if (chunks === undefined || (!(chunks instanceof Array))) {
-			return;
+			return false;
 		}
 		for (const chunk of chunks) {
 			this.collectModules(chunk.modules);
 		}
+		return true;
 	}
 
-	private collectModules(modules: any[]): void {
+	private collectModules(modules: any[]): boolean {
 		if (modules === undefined || (!(modules instanceof Array))) {
-			return;
+			return false;
 		}
 		for (const module of modules) {
 			const fileReference = new FileReference(module.name, module.built);
@@ -75,6 +76,7 @@ export class FileCollector {
 			this.collectModules(module.modules);
 			this.addFileReferencetoFiles(fileReference);
 		}
+		return false;
 	}
 
 	private addFileReferencetoFiles(fileReference: FileReference) {

@@ -13,15 +13,12 @@ import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
 import {PackageInformation} from "../results/packageInformation";
 import {FolderRunner} from "../utils/folderRunner";
-import {FileCollector} from "./filecollector";
+import {FileCollector} from "./fileCollector";
 
 export namespace PackageCollector {
 	export function collectPackages(fileCollector: FileCollector): PackageInformation[] {
 		const files = fileCollector.files;
 		const result: PackageInformation[] = [];
-		if (files.modules.length === 0) {
-			return result;
-		}
 		for (const file of files.modules) {
 			PackageCollector.checkFileReference(file, file.name, result);
 		}
