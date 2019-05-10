@@ -22,25 +22,24 @@ export async function main(argv: string[]): Promise<void> {
 		})
 		.option(Constants.RESULT, {
 			demand: true,
-			desc: "Please specify where to write the json containing the exporter.",
+			desc: "Please specify where to write the json containing the analyze result.",
 			type: "string",
 		})
 		.option(Constants.STATS, {
 			demand: true,
-			desc: "Please specify the path to the statistic json <stats.json>.",
+			desc: "Please specify the path to the statistic json <stats_4-29.json>.",
 			type: "string",
 		})
 		.option(Constants.EXTRACTLICENSES, {
 			default: true,
 			demand: false,
-			desc: "Extract all licenses.",
+			desc: "Extract all licenses and report them in the result.",
 			type: "boolean",
 		})
 		.option(Constants.PACKAGEOUTPUT, {
 			default: null,
-			defaultDescription: "<working directory>/packages",
 			demand: false,
-			desc: "Specific folder where the extracted packages should be exported.",
+			desc: "Specific folder where the referenced packages should be downloaded to.",
 			type: "string",
 		})
 		.help();

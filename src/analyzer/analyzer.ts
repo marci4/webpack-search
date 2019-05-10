@@ -10,7 +10,7 @@ import * as fs from "fs";
 import {Configuration} from "../configuration/configuration";
 import {ErrorMessage} from "../results/errorMessage";
 import {Result} from "../results/result";
-import {FileCollector} from "./filecollector";
+import {FileCollector} from "./fileCollector";
 import {LicenseCollector} from "./licenseCollector";
 import {PackageCollector} from "./packageCollector";
 import {PackageLockCollector} from "./packageLockCollector";
@@ -19,17 +19,13 @@ export namespace Analyzer {
 
 	export function analyze(configuration: Configuration): Result {
 		const result = new Result();
-		if (!fs.existsSync(configuration.workingDirectoryPath)) {
-			result.errors.push(new ErrorMessage("Invalid working directory: ${configuration.workingDirectoryPath}"));
-		}
-		// Update the working directory to fit for the specific stats.json
+		// Update the working directory to fit for the specific stats_4-29.json
 		process.chdir(configuration.workingDirectoryPath);
 		let json;
 		try {
 			json = JSON.parse(fs.readFileSync(configuration.statsJsonPath, "utf8"));
 		} catch (e) {
-			result.errors.push(new ErrorMessage("Invalid file: ${file}"));
-			return null;
+			result.errors.push(new ErrorMessage("Invalid file: " + configuration.statsJsonPath));
 		}
 		if (result.errors.length !== 0) {
 			return result;

@@ -12,7 +12,7 @@ import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
 import {LicenseInformation} from "../results/licenseInformation";
 import {FolderRunner} from "../utils/folderRunner";
-import {FileCollector} from "./filecollector";
+import {FileCollector} from "./fileCollector";
 
 export namespace LicenseCollector {
 
@@ -61,8 +61,8 @@ export namespace LicenseCollector {
 				const result: string[] = [];
 				for (const file of files) {
 					// angular uses readme...
-					if (file.toLowerCase().includes("license") || file.toLowerCase().includes("licence")) {
-						const resultingPath = path.resolve(searchPath + "\\" + file);
+					if (file.toLowerCase().includes("license") || file.toLowerCase().includes("licence") || file.toLowerCase().includes("lisense")) {
+						const resultingPath = path.resolve(path.join(searchPath, file));
 						if (!result.includes(resultingPath)) {
 							result.push(resultingPath);
 						}
