@@ -1,17 +1,17 @@
+# This file is a template, and might need editing before it works on your project.
+# Official framework image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/node/tags/
 image: node:latest
 
 cache:
-  untracked: true
-  key: "$CI_BUILD_REF_NAME"
   paths:
-    - node_modules/
+  - node_modules/
 
 stages:
   - install
   - lint
   - build
   - test
-  - pages
 
 install:
   stage: install
@@ -32,19 +32,3 @@ test:
   stage: test
   script:
    - npm run test
-  artifacts:
-    paths:
-      - coverage/
-
-pages:
-  stage: pages
-  dependencies:
-    - test
-  script:
-    - mv coverage/ public/
-  artifacts:
-    paths:
-      - public
-    expire_in: 30 days
-  only:
-    - master
