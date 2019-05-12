@@ -120,7 +120,7 @@ describe("LicenseCollector", () => {
 			expect(mockFsExists).toBeCalledTimes(1);
 			mockFsExists.mockRestore();
 		});
-		xit("No directory", () => {
+		it("No directory", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return true;
 			});
