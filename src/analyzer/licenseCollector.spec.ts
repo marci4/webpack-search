@@ -17,7 +17,7 @@ import {FileCollector} from "./fileCollector";
 import {LicenseCollector} from "./licenseCollector";
 
 describe("LicenseCollector", () => {
-	xdescribe("collectLicenses", () => {
+	describe("collectLicenses", () => {
 		it("Check with empty modules", () => {
 			const fileCollector = {files: new Files()} as FileCollector;
 			expect(LicenseCollector.collectLicenses(fileCollector).length).toEqual(0);
@@ -32,7 +32,7 @@ describe("LicenseCollector", () => {
 			mockCheckFileReference.mockRestore();
 		});
 	});
-	xdescribe("checkFileReference", () => {
+	describe("checkFileReference", () => {
 		it("LicenseInfo is null", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;
