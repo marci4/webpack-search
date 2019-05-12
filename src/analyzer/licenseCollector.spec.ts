@@ -146,11 +146,11 @@ describe("LicenseCollector", () => {
 			mockFsLstatSync.mockRestore();
 		});
 		it("Find licenses", () => {
-			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
+			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementationOnce(() => {
 				return true;
 			});
 			const mockReaddirSync = jest.spyOn(fs, "readdirSync").
-				mockImplementation(() => {
+				mockImplementationOnce(() => {
 				return ["tmp", "reLICENSE.md", "aaaalicenceREADME", "teLiSenSekd"] as unknown as fs.Dirent[];
 			});
 			const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
