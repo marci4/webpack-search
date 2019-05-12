@@ -111,7 +111,7 @@ describe("LicenseCollector", () => {
 			mockExtractPackageInfo.mockRestore();
 		});
 	});
-	xdescribe("checkForAdditionalLicenses", () => {
+	describe("checkForAdditionalLicenses", () => {
 		it("Unknown file", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return false;
@@ -120,7 +120,7 @@ describe("LicenseCollector", () => {
 			expect(mockFsExists).toBeCalledTimes(1);
 			mockFsExists.mockRestore();
 		});
-		it("No directory", () => {
+		xit("No directory", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return true;
 			});
@@ -145,7 +145,7 @@ describe("LicenseCollector", () => {
 			mockFsExists.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
-		it("Find licenses", () => {
+		xit("Find licenses", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return true;
 			});
