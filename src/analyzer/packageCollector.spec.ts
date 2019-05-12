@@ -105,7 +105,7 @@ describe("PackageCollector", () => {
 		});
 	});
 	describe("checkFileReference", () => {
-		it("Packageinfo is null", () => {
+		xit("Packageinfo is null", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;
 				const currentFile = currentFilePath;
@@ -123,7 +123,7 @@ describe("PackageCollector", () => {
 			mockCheckFolder.mockRestore();
 			mockExtractPackageInfo.mockRestore();
 		});
-		it("Angular package", () => {
+		xit("Angular package", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;
 				const currentFile = currentFilePath;
@@ -141,7 +141,7 @@ describe("PackageCollector", () => {
 			mockCheckFolder.mockRestore();
 			mockExtractPackageInfo.mockRestore();
 		});
-		it("Normal package not existing", () => {
+		xit("Normal package not existing", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;
 				const currentFile = currentFilePath;
@@ -159,7 +159,7 @@ describe("PackageCollector", () => {
 			mockCheckFolder.mockRestore();
 			mockExtractPackageInfo.mockRestore();
 		});
-		it("Normal package existing", () => {
+		xit("Normal package existing", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;
 				const currentFile = currentFilePath;
@@ -183,7 +183,7 @@ describe("PackageCollector", () => {
 			mockCheckFolder.mockRestore();
 			mockExtractPackageInfo.mockRestore();
 		});
-		it("Normal package existing", () => {
+		xit("Normal package existing", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;
 				const currentFile = currentFilePath;
