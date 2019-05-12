@@ -58,7 +58,7 @@ describe("PackageCollector", () => {
 			mockFsExists.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
-		it("No package.json", () => {
+		xit("No package.json", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation((tempPath) => {
 				return tempPath === "/tmp";
 			});
@@ -77,7 +77,7 @@ describe("PackageCollector", () => {
 			mockFsExists.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
-		it("Read package.json", () => {
+		xit("Read package.json", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return true;
 			});
