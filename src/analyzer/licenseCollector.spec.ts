@@ -181,20 +181,16 @@ describe("LicenseCollector", () => {
 					},
 				} as fs.Stats;
 			});
-			const mockPathResolve = jest.spyOn(path, "resolve").mockImplementation((...pathSegments: string[]) => {
-				return pathSegments[0];
-			});
+
 			mockFsExists.mockClear();
 			mockFsLstatSync.mockClear();
 			mockReaddirSync.mockClear();
-			mockPathResolve.mockClear();
 			expect(LicenseCollector.checkForAdditionalLicenses("/tmp")).toEqual(["\\tmp\\reLICENSE.md", "\\tmp\\aaaalicenceREADME", "\\tmp\\teLiSenSekd" ]);
 			expect(mockFsExists).toBeCalledTimes(1);
 			expect(mockFsLstatSync).toBeCalledTimes(1);
 			expect(mockReaddirSync).toBeCalledTimes(1);
 			mockReaddirSync.mockRestore();
 			mockFsExists.mockRestore();
-			mockPathResolve.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
 	});
