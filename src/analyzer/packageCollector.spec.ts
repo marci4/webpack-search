@@ -16,11 +16,11 @@ import {PackageCollector} from "./packageCollector";
 
 describe("PackageCollector", () => {
 	describe("collectPackages", () => {
-		it("Check with empty modules", () => {
+		xit("Check with empty modules", () => {
 			const fileCollector = {files: new Files()} as FileCollector;
 			expect(PackageCollector.collectPackages(fileCollector).length).toEqual(0);
 		});
-		it("Check with modules", () => {
+		xit("Check with modules", () => {
 			const fileCollector = {files: new Files()} as FileCollector;
 			fileCollector.files.modules.push(new FileReference("/tmp/testfile0", false));
 			fileCollector.files.modules.push(new FileReference("/tmp/testfile1", false));
