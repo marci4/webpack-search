@@ -149,9 +149,30 @@ describe("LicenseCollector", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementationOnce(() => {
 				return true;
 			});
-			const mockReaddirSync = jest.spyOn(fs, "readdirSync").
-				mockImplementationOnce(() => {
-				return ["tmp", "reLICENSE.md", "aaaalicenceREADME", "teLiSenSekd"] as unknown as fs.Dirent[];
+			const mockReaddirSync = jest.spyOn(fs, "readdirSync").mockImplementation(() => {
+				const result = [];
+				result.push({
+					name: "tmp", isFile() {
+						return true;
+					},
+				} as fs.Dirent);
+				result.push({
+					isFile() {
+						return true;
+					},
+					name: "reLICENSE.md",
+				} as fs.Dirent);
+				result.push({
+					name: "aaaalicenceREADME", isFile() {
+						return true;
+					},
+				} as fs.Dirent);
+				result.push({
+					name: "teLiSenSekd", isFile() {
+						return true;
+					},
+				} as fs.Dirent);
+				return result;
 			});
 			const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
 				return {
