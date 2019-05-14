@@ -58,16 +58,14 @@ describe("PackageCollector", () => {
 			mockFsExists.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
-		xit("No package.json", () => {
+		it("No package.json", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation((tempPath) => {
 				return tempPath === "/tmp";
 			});
 			const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
-				return {
-					isDirectory() {
+				return fs.Stats.mockImplementation(() => {	isDirectory: () => {
 						return true;
-					},
-				} as fs.Stats;
+					}}) ;
 			});
 			mockFsExists.mockClear();
 			mockFsLstatSync.mockClear();
