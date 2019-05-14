@@ -30,7 +30,7 @@ describe("PackageCollector", () => {
 			mockCheckFileReference.mockRestore();
 		});
 	});
-	xdescribe("extractPackageInfo", () => {
+	describe("extractPackageInfo", () => {
 		it("Unknown file", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return false;
@@ -104,7 +104,7 @@ describe("PackageCollector", () => {
 			mockFsLstatSync.mockRestore();
 		});
 	});
-	xdescribe("checkFileReference", () => {
+	describe("checkFileReference", () => {
 		it("Packageinfo is null", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;
