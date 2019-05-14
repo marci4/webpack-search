@@ -15,7 +15,7 @@ import {FileCollector} from "./fileCollector";
 import {PackageCollector} from "./packageCollector";
 
 describe("PackageCollector", () => {
-	xdescribe("collectPackages", () => {
+	describe("collectPackages", () => {
 		it("Check with empty modules", () => {
 			const fileCollector = {files: new Files()} as FileCollector;
 			expect(PackageCollector.collectPackages(fileCollector).length).toEqual(0);

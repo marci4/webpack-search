@@ -145,7 +145,7 @@ describe("LicenseCollector", () => {
 			mockFsExists.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
-		it("Find licenses", () => {
+		xit("Find licenses", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementationOnce(() => {
 				return true;
 			});
