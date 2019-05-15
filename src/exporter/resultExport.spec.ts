@@ -20,13 +20,17 @@ import {Result} from "../results/result";
 import {ResultExport} from "./resultExport";
 
 describe("ResultExport", () => {
-	const mockFsUnlink = jest.spyOn(fs, "unlinkSync").mockImplementation(() => {
-		//
+	beforeEach(() => {
+		jest.restoreAllMocks();
+		mockFsUnlink = jest.spyOn(fs, "unlinkSync").mockImplementation(() => {
+			//
+		});
+		mockFsWriteFile = jest.spyOn(fs, "writeFileSync").mockImplementation(() => {
+			//
+		});
 	});
-
-	const mockFsWriteFile = jest.spyOn(fs, "writeFileSync").mockImplementation(() => {
-		//
-	});
+	let mockFsUnlink: any;
+	let mockFsWriteFile: any;
 	afterAll(() => {
 		mockFsUnlink.mockRestore();
 		mockFsWriteFile.mockRestore();

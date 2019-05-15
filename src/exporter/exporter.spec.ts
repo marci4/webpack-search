@@ -14,12 +14,17 @@ import {PackageLockExport} from "./packageLockExport";
 import {ResultExport} from "./resultExport";
 
 describe("Exporter", () => {
-	const mockExportReferencedPackages = jest.spyOn(PackageLockExport, "exportReferencedPackages").mockImplementation(() => {
-		//
+	beforeEach(() => {
+		jest.restoreAllMocks();
+		mockExportReferencedPackages = jest.spyOn(PackageLockExport, "exportReferencedPackages").mockImplementation(() => {
+			//
+		});
+		mockExportResult = jest.spyOn(ResultExport, "exportResult").mockImplementation(() => {
+			//
+		});
 	});
-	const mockExportResult = jest.spyOn(ResultExport, "exportResult").mockImplementation(() => {
-		//
-	});
+	let mockExportReferencedPackages: any;
+	let mockExportResult: any;
 	afterAll(() => {
 		mockExportResult.mockRestore();
 		mockExportReferencedPackages.mockRestore();

@@ -7,12 +7,16 @@
  */
 
 import * as fs from "fs";
+import {Stats} from "fs";
 import {Argv} from "yargs";
 import {Configuration} from "../configuration/configuration";
 import {Constants} from "../configuration/constants";
 import {PackageLockCollector} from "./packageLockCollector";
 
 describe("PackageLockCollector", () => {
+	beforeEach(() => {
+		jest.restoreAllMocks();
+	});
 	const localMock: any = [];
 	localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 	const configuration = new Configuration(localMock as unknown as Argv);
@@ -24,12 +28,16 @@ describe("PackageLockCollector", () => {
 		expect(mockFsExists).toBeCalledTimes(1);
 		mockFsExists.mockRestore();
 	});
-	xit("No package-lock.json", () => {
+	it("No package-lock.json", () => {
 		const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation((tempPath) => {
 			return tempPath === "/tmp/home";
 		});
 		const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
-			return {isDirectory() { return true; }} as fs.Stats;
+			const result = new Stats();
+			result.isDirectory = jest.fn().mockImplementation(() => {
+				return true;
+			});
+			return result;
 		});
 		expect(PackageLockCollector.collectPackageLocks(configuration).length).toEqual(0);
 		expect(mockFsExists).toBeCalledTimes(2);
@@ -37,12 +45,16 @@ describe("PackageLockCollector", () => {
 		mockFsExists.mockRestore();
 		mockFsLstatSync.mockRestore();
 	});
-	xit("Extract package-lock-json", () => {
+	it("Extract package-lock-json", () => {
 		const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 			return true;
 		});
 		const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
-			return {isDirectory() { return true; }} as fs.Stats;
+			const result = new Stats();
+			result.isDirectory = jest.fn().mockImplementation(() => {
+				return true;
+			});
+			return result;
 		});
 		const mockReadFileSync = jest.spyOn(fs, "readFileSync").mockImplementation(() => {
 			return "{\"name\": \"test\",\"requires\": true,\"lockfileVersion\": 1,\"dependencies\": {\"test1\": {\"version\": \"7.0.0\",\"resolved\": \"https://registry.npmjs.org/test1/-/test1-7.0.0.tgz\"},\"test0\": {\"version\": \"0.0.7\",\"resolved\": \"https://registry.npmjs.org/test0/-/test0-0.0.7.tgz\"},\"test2\": {\"version\": \"1.3.3.7\",\"resolved\": \"https://registry.npmjs.org/test2/-/test2-1.3.3.7.tgz\"}}}";

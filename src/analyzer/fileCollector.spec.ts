@@ -11,6 +11,9 @@ import * as path from "path";
 import {FileCollector} from "./fileCollector";
 
 describe("FileCollector", () => {
+	beforeEach(() => {
+		jest.restoreAllMocks();
+	});
 	it("Constructor", () => {
 		const fileCollector = new FileCollector({});
 		expect(fileCollector.filesFound()).toBeFalsy();
