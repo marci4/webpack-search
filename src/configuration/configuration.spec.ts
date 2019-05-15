@@ -17,7 +17,13 @@ mock[Constants.STATS] = "/tmp/stats.json";
 mock[Constants.RESULT] = "arg/exporter.txt";
 mock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 describe("Configuration", () => {
+	beforeEach(() => {
+		jest.restoreAllMocks();
+	});
 	describe("constructor", () => {
+		beforeEach(() => {
+			jest.restoreAllMocks();
+		});
 		it("Extract from yargs", () => {
 			mock[Constants.PACKAGEOUTPUT] = "/tmp/packages";
 			const configuration = new Configuration(mock as unknown as Argv);
@@ -39,6 +45,9 @@ describe("Configuration", () => {
 		});
 	});
 	describe("isValid", () => {
+		beforeEach(() => {
+			jest.restoreAllMocks();
+		});
 		it("invalid statsJsonPath", () => {
 			const localMock: any = [];
 			localMock[Constants.STATS] = "/tmp/stats.json";

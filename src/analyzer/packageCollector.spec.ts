@@ -7,6 +7,8 @@
  */
 
 import * as fs from "fs";
+import {Stats} from "fs";
+import * as path from "path";
 import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
 import {PackageInformation} from "../results/packageInformation";
@@ -15,7 +17,13 @@ import {FileCollector} from "./fileCollector";
 import {PackageCollector} from "./packageCollector";
 
 describe("PackageCollector", () => {
+	beforeEach(() => {
+		jest.restoreAllMocks();
+	});
 	describe("collectPackages", () => {
+		beforeEach(() => {
+			jest.restoreAllMocks();
+		});
 		it("Check with empty modules", () => {
 			const fileCollector = {files: new Files()} as FileCollector;
 			expect(PackageCollector.collectPackages(fileCollector).length).toEqual(0);
@@ -31,6 +39,9 @@ describe("PackageCollector", () => {
 		});
 	});
 	describe("extractPackageInfo", () => {
+		beforeEach(() => {
+			jest.restoreAllMocks();
+		});
 		it("Unknown file", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return false;
@@ -39,16 +50,16 @@ describe("PackageCollector", () => {
 			expect(mockFsExists).toBeCalledTimes(1);
 			mockFsExists.mockRestore();
 		});
-		xit("No directory", () => {
+		it("No directory", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return true;
 			});
 			const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
-				return {
-					isDirectory() {
-						return false;
-					},
-				} as fs.Stats;
+				const result = new Stats();
+				result.isDirectory = jest.fn().mockImplementation(() => {
+					return false;
+				});
+				return result;
 			});
 			mockFsExists.mockClear();
 			mockFsLstatSync.mockClear();
@@ -58,16 +69,16 @@ describe("PackageCollector", () => {
 			mockFsExists.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
-		xit("No package.json", () => {
+		it("No package.json", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation((tempPath) => {
 				return tempPath === "/tmp";
 			});
 			const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
-				return {
-					isDirectory() {
-						return true;
-					},
-				} as fs.Stats;
+				const result = new Stats();
+				result.isDirectory = jest.fn().mockImplementation(() => {
+					return true;
+				});
+				return result;
 			});
 			mockFsExists.mockClear();
 			mockFsLstatSync.mockClear();
@@ -77,16 +88,16 @@ describe("PackageCollector", () => {
 			mockFsExists.mockRestore();
 			mockFsLstatSync.mockRestore();
 		});
-		xit("Read package.json", () => {
+		it("Read package.json", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return true;
 			});
 			const mockFsLstatSync = jest.spyOn(fs, "lstatSync").mockImplementation(() => {
-				return {
-					isDirectory() {
-						return true;
-					},
-				} as fs.Stats;
+				const mockStats = new Stats();
+				mockStats.isDirectory = jest.fn().mockImplementation(() => {
+					return true;
+				});
+				return mockStats;
 			});
 			const mockFsReadFileSync = jest.spyOn(fs, "readFileSync").mockImplementation(() => {
 				return "{\"name\": \"test\",\"version\": \"1.1.0\",\"author\": \"marci4\",\"license\": \"MIT\"}";
@@ -95,7 +106,17 @@ describe("PackageCollector", () => {
 			mockFsExists.mockClear();
 			mockFsLstatSync.mockClear();
 			mockFsReadFileSync.mockClear();
-			expect(PackageCollector.extractPackageInfo("/tmp")).toEqual(JSON.parse("{\"files\": [], \"name\": \"test\", \"packageAuthor\": {\"email\": null, \"name\": \"marci4\"}, \"packageLicense\": \"MIT\", \"packagePath\": \"\\\\tmp\\\\package.json\", \"version\": \"1.1.0\"}"));
+			const result = PackageCollector.extractPackageInfo("/tmp");
+			const expected = JSON.parse("{\"files\": [], \"name\": \"test\", \"packageAuthor\": {\"email\": null, \"name\": \"marci4\"}, \"packageLicense\": \"MIT\"," +
+				" \"version\": \"1.1.0\"}");
+			expect(result.files).toEqual(expected.files);
+			expect(result.name).toEqual(expected.name);
+			expect(result.packageAuthor.name).toEqual(expected.packageAuthor.name);
+			expect(result.packageAuthor.email).toEqual(expected.packageAuthor.email);
+			expect(result.packageLicense).toEqual(expected.packageLicense);
+			expect(result.version).toEqual(expected.version);
+			// Somehow path.join does produce once with \\tmp and once without \\
+			expect(result.packagePath.endsWith(path.join("tmp", "package.json"))).toBeTruthy();
 			expect(mockFsReadFileSync).toBeCalledTimes(1);
 			expect(mockFsExists).toBeCalledTimes(2);
 			expect(mockFsLstatSync).toBeCalledTimes(1);
@@ -105,6 +126,9 @@ describe("PackageCollector", () => {
 		});
 	});
 	describe("checkFileReference", () => {
+		beforeEach(() => {
+			jest.restoreAllMocks();
+		});
 		it("Packageinfo is null", () => {
 			const mockCheckFolder = jest.spyOn(FolderRunner, "checkFolder").mockImplementation((file, currentFilePath, callback: (currentFolder: string) => {}) => {
 				const tempFile = file;

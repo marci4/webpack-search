@@ -16,6 +16,9 @@ import {PackageCollector} from "./packageCollector";
 import {PackageLockCollector} from "./packageLockCollector";
 
 describe("Analyzer", () => {
+	beforeEach(() => {
+		jest.restoreAllMocks();
+	});
 	const localMock: any = [];
 	localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 	localMock[Constants.STATS] = "/tmp/stats_4-29.json";

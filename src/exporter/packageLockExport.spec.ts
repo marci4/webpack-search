@@ -19,12 +19,16 @@ import {Result} from "../results/result";
 import {PackageLockExport} from "./packageLockExport";
 
 describe("PackageLockExport", () => {
+	beforeEach(() => {
+		jest.restoreAllMocks();
+	});
 	describe("exportReferencedPackages", () => {
 		let mockMkdirSync: any;
 		let mockFsUnlink: any;
 		let mockPathJoin: any;
 		let mockPathBasename: any;
 		beforeEach(() => {
+			jest.restoreAllMocks();
 			mockMkdirSync = jest.spyOn(fs, "mkdirSync").mockImplementation(() => {
 				// Empty
 			});

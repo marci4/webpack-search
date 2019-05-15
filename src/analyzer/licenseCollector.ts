@@ -57,12 +57,12 @@ export namespace LicenseCollector {
 	export function checkForAdditionalLicenses(searchPath: string): string[] {
 		if (fs.existsSync(searchPath)) {
 			if (fs.lstatSync(searchPath).isDirectory()) {
-				const files = fs.readdirSync(searchPath);
+				const files = fs.readdirSync(searchPath, {withFileTypes: true});
 				const result: string[] = [];
 				for (const file of files) {
 					// angular uses readme...
-					if (file.toLowerCase().includes("license") || file.toLowerCase().includes("licence") || file.toLowerCase().includes("lisense")) {
-						const resultingPath = path.resolve(path.join(searchPath, file));
+					if (file.name.toLowerCase().includes("license") || file.name.toLowerCase().includes("licence") || file.name.toLowerCase().includes("lisense")) {
+						const resultingPath = path.resolve(path.join(searchPath, file.name));
 						if (!result.includes(resultingPath)) {
 							result.push(resultingPath);
 						}
