@@ -7,6 +7,7 @@
  */
 
 import * as fs from "fs";
+import {Dirent} from "fs";
 import * as path from "path";
 import {FileReference} from "../results/fileReference";
 import {Files} from "../results/files";
@@ -34,10 +35,8 @@ export namespace LicenseCollector {
 			let existingLicenseInfo: LicenseInformation = null;
 			for (const licensePath of licensePaths) {
 				existingLicenseInfo = licenseData.find((licenseEntry) => licenseEntry.licensePath === licensePath);
-				if (existingLicenseInfo !== undefined) {
-					if (!existingLicenseInfo.fileReferences.find((referencedFiles) => referencedFiles.name === file.name)) {
-						existingLicenseInfo.fileReferences.push(file);
-					}
+				if (existingLicenseInfo !== undefined && !existingLicenseInfo.fileReferences.find((referencedFiles) => referencedFiles.name === file.name)) {
+					existingLicenseInfo.fileReferences.push(file);
 				} else {
 					const licenseInfo = new LicenseInformation(licensePath, file);
 					licenseData.push(licenseInfo);
@@ -57,15 +56,14 @@ export namespace LicenseCollector {
 	export function checkForAdditionalLicenses(searchPath: string): string[] {
 		if (fs.existsSync(searchPath)) {
 			if (fs.lstatSync(searchPath).isDirectory()) {
-				const files = fs.readdirSync(searchPath, {withFileTypes: true});
+				const files: Dirent[] = fs.readdirSync(searchPath, {withFileTypes: true});
 				const result: string[] = [];
 				for (const file of files) {
 					// angular uses readme...
-					if (file.name.toLowerCase().includes("license") || file.name.toLowerCase().includes("licence") || file.name.toLowerCase().includes("lisense")) {
-						const resultingPath = path.resolve(path.join(searchPath, file.name));
-						if (!result.includes(resultingPath)) {
-							result.push(resultingPath);
-						}
+					const resultingPath = path.resolve(path.join(searchPath, file.name));
+					if ((file.name.toLowerCase().includes("license") || file.name.toLowerCase().includes("licence") || file.name.toLowerCase().includes("lisense")) &&
+						!result.includes(resultingPath)) {
+						result.push(resultingPath);
 					}
 				}
 				return result;

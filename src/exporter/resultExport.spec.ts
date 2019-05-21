@@ -36,7 +36,7 @@ describe("ResultExport", () => {
 		mockFsWriteFile.mockRestore();
 	});
 	it("exportResult", () => {
-		const configuration = new Configuration({resultJsonPath: "/test/resultpath.json"});
+		const configuration = new Configuration({resultJsonPath: "/test/resultpath.json", extractLicenses: true});
 		const result = new Result();
 		const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 			return false;
@@ -76,6 +76,33 @@ describe("ResultExport", () => {
 		expect(mockFsExists).toHaveBeenCalledTimes(1);
 		expect(mockFsWriteFile).toHaveBeenCalledTimes(1);
 		expect(mockFsWriteFile).toHaveBeenCalledWith(configuration.resultJsonPath, "{\"errors\":[{\"message\":\"Testerror 0\"},{\"message\":\"Testerror 1\"}],\"packages\":[{\"files\":[{\"assets\":[],\"name\":\"/test/file1\",\"built\":false},{\"assets\":[],\"name\":\"/test/file2\",\"built\":true},{\"assets\":[],\"name\":\"/test/file3\",\"built\":false},{\"assets\":[],\"name\":\"/test/file4\",\"built\":true}],\"name\":\"Package1\",\"version\":\"P1.1.0.1\",\"packageLicense\":\"MIT\",\"packageAuthor\":{\"name\":\"marci4\",\"email\":\"admin@marci4.de\"},\"packagePath\":\"/test/package1Path\"},{\"files\":[{\"assets\":[],\"name\":\"/test/file1\",\"built\":false},{\"assets\":[],\"name\":\"/test/file2\",\"built\":true}],\"name\":\"Package0\",\"version\":\"P1.1.0.0\",\"packageLicense\":\"BEERWARE\",\"packageAuthor\":{\"name\":\"marci4\",\"email\":null},\"packagePath\":\"/test/package0Path\"}],\"licenses\":[{\"fileReferences\":[{\"assets\":[{\"name\":\"Asset0\",\"emitted\":true,\"size\":42},{\"name\":\"Asset1\",\"emitted\":false,\"size\":1337},{\"name\":\"Asset1\",\"emitted\":false,\"size\":1337}],\"name\":\"/test/file0\",\"built\":false}],\"licenseContent\":null,\"licensePath\":\"/test/licensepath0\"},{\"fileReferences\":[{\"assets\":[],\"name\":\"/test/file2\",\"built\":false}],\"licenseContent\":null,\"licensePath\":\"/test/licensepath1\"}],\"packageLocks\":[{\"name\":\"PackageName\",\"version\":\"1.1.0.0\",\"resolvedPath\":\"/test/package0\"},{\"name\":\"PackageName1\",\"version\":\"1.3.3.7\",\"resolvedPath\":\"/test/package4\"}]}");
+		mockFsExists.mockRestore();
+	});
+	it("exportResult without licenses", () => {
+		const configuration = new Configuration({resultJsonPath: "/test/resultpath.json", extractLicenses: false});
+		const result = new Result();
+		const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
+			return false;
+		});
+		result.errors.push(new ErrorMessage("Testerror 0"));
+		const fileRef0 = new FileReference("/test/file0", false);
+		fileRef0.assets.push(new AssetReference("Asset0", true, 42));
+		fileRef0.reasons.push(new Reason("Module0", "ModuleId0", "multi"));
+		result.licenses.push(new LicenseInformation("/test/licensepath0", fileRef0));
+		result.packageLocks.push(new PackageLockInformation("PackageName1", "1.3.3.7", "/test/package4"));
+		const fileRef1 = new FileReference("/test/file1", false);
+		const package0 = new PackageInformation("Package0", "P1.1.0.0", "BEERWARE", Author.parse("marci4"), "/test/package0Path");
+		package0.files.push(fileRef1);
+		result.packages.push(package0);
+
+		mockFsWriteFile.mockClear();
+		mockFsUnlink.mockClear();
+		mockFsExists.mockClear();
+		ResultExport.exportResult(configuration, result);
+		expect(mockFsUnlink).toHaveBeenCalledTimes(0);
+		expect(mockFsExists).toHaveBeenCalledTimes(1);
+		expect(mockFsWriteFile).toHaveBeenCalledTimes(1);
+		expect(mockFsWriteFile).toHaveBeenCalledWith(configuration.resultJsonPath,  "{\"errors\":[{\"message\":\"Testerror 0\"}],\"packages\":[{\"files\":[{\"assets\":[],\"name\":\"/test/file1\",\"built\":false}],\"name\":\"Package0\",\"version\":\"P1.1.0.0\",\"packageLicense\":\"BEERWARE\",\"packageAuthor\":{\"name\":\"marci4\",\"email\":null},\"packagePath\":\"/test/package0Path\"}],\"licenses\":[{\"fileReferences\":[{\"assets\":[{\"name\":\"Asset0\",\"emitted\":true,\"size\":42}],\"name\":\"/test/file0\",\"built\":false}],\"licensePath\":\"/test/licensepath0\"}],\"packageLocks\":[{\"name\":\"PackageName1\",\"version\":\"1.3.3.7\",\"resolvedPath\":\"/test/package4\"}]}");
 		mockFsExists.mockRestore();
 	});
 	it("exportResult noUnlink", () => {

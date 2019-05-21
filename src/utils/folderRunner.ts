@@ -28,10 +28,8 @@ export namespace FolderRunner {
 				return this.checkFolder(file, path.dirname(currentFilePath), callback);
 			}
 		}
-		if (fs.lstatSync(currentFolder).isDirectory()) {
-			if (callback(currentFolder)) {
-				return true;
-			}
+		if (fs.lstatSync(currentFolder).isDirectory() && callback(currentFolder)) {
+			return true;
 		}
 		// We need to go deeper
 		return this.checkFolder(file, path.dirname(currentFilePath), callback);

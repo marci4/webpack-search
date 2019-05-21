@@ -30,4 +30,16 @@ describe("Main", () => {
 		expect(mockError).toHaveBeenCalledTimes(2);
 		done();
 	});
+	it("static main with missing arguments", (done) => {
+		const mockExit = jest.spyOn(process, "exit").mockImplementation(mockExitImplementation);
+		const mockError = jest.spyOn(console, "error").mockImplementation(mockConsoleImplementation);
+		try {
+			main(["hello"]).catch(() => done());
+		} catch (e) {
+			expect(e).toEqual("1");
+		}
+		expect(mockExit).toHaveBeenCalledWith(1);
+		expect(mockError).toHaveBeenCalledTimes(2);
+		done();
+	});
 });
