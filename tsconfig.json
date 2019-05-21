@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "ES5",
-    "outDir": "dist",
+    "module": "es6",
     "noImplicitAny": true,
+    "outDir": "./dist",
+    "target": "es5",
     "noUnusedParameters": true,
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "allowJs": false,
     "removeComments": true,
-    "declaration": true,
+    "declaration": false,
     "sourceMap": true,
     "rootDir": "src"
   },
