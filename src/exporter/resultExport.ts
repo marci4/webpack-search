@@ -19,6 +19,9 @@ export namespace ResultExport {
 			if (key === "reasons") {
 				return undefined;
 			}
+			if (!configuration.extractLicenses && key === "licenseContent") {
+				return undefined;
+			}
 			return value;
 		}));
 	}

@@ -16,16 +16,14 @@ export namespace PackageLockCollector {
 	export function collectPackageLocks(configuration: Configuration): PackageLockInformation[] {
 		const workingDirectory = configuration.workingDirectoryPath;
 		const result: PackageLockInformation[] = [];
-		if (fs.existsSync(workingDirectory)) {
-			if (fs.lstatSync(workingDirectory).isDirectory()) {
-				const packagePath = path.join(workingDirectory, "package-lock.json");
-				if (fs.existsSync(packagePath)) {
-					const json = JSON.parse(fs.readFileSync(packagePath, "utf8"));
-					const dependencyKeys = Object.keys(json.dependencies);
-					for (const dependencyKey of dependencyKeys) {
-						const dependency = json.dependencies[dependencyKey];
-						result.push(new PackageLockInformation(dependencyKey, dependency.version, dependency.resolved));
-					}
+		if (fs.existsSync(workingDirectory) && fs.lstatSync(workingDirectory).isDirectory()) {
+			const packagePath = path.join(workingDirectory, "package-lock.json");
+			if (fs.existsSync(packagePath)) {
+				const json = JSON.parse(fs.readFileSync(packagePath, "utf8"));
+				const dependencyKeys = Object.keys(json.dependencies);
+				for (const dependencyKey of dependencyKeys) {
+					const dependency = json.dependencies[dependencyKey];
+					result.push(new PackageLockInformation(dependencyKey, dependency.version, dependency.resolved));
 				}
 			}
 		}
