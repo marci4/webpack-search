@@ -4,8 +4,7 @@
     "name": "Marcel Prestel",
     "email": "admin@marci4.de"
   },
-  "readme": "README-public.md",
-  "version": "1.0.0-alpha0",
+  "version": "0.1.0",
   "license": "Beerware",
   "dependencies": {
     "yargs": "^13.2.4",
