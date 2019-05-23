@@ -17,17 +17,17 @@ export async function main(argv: string[]): Promise<void> {
 	const arg = yargs
 		.option(Constants.WORKINGDIRECTORY, {
 			demand: true,
-			desc: "Please specify the <working directory> of the exporter json.",
+			desc: "Specify the working directory>of the exporter json.",
 			type: "string",
 		})
 		.option(Constants.RESULT, {
 			demand: true,
-			desc: "Please specify where to write the json containing the analyze result.",
+			desc: "Specify where to write the json containing the analyze result.",
 			type: "string",
 		})
 		.option(Constants.STATS, {
 			demand: true,
-			desc: "Please specify the path to the statistic json <stats_4-29.json>.",
+			desc: "Specify the path to the stats json.",
 			type: "string",
 		})
 		.option(Constants.EXTRACTLICENSES, {

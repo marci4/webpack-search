@@ -17,7 +17,9 @@ describe("Exporter", () => {
 	beforeEach(() => {
 		jest.restoreAllMocks();
 		mockExportReferencedPackages = jest.spyOn(PackageLockExport, "exportReferencedPackages").mockImplementation(() => {
-			//
+			return new Promise(async (resolve) => {
+				resolve();
+			});
 		});
 		mockExportResult = jest.spyOn(ResultExport, "exportResult").mockImplementation(() => {
 			//

@@ -7,6 +7,7 @@
  */
 
 import * as fs from "fs";
+import * as nock from "nock";
 import * as path from "path";
 import {Argv} from "yargs";
 import {Configuration} from "../configuration/configuration";
@@ -53,7 +54,7 @@ describe("PackageLockExport", () => {
 			mockPathJoin.mockRestore();
 			mockPathBasename.mockRestore();
 		});
-		it("Create export folder", () => {
+		it("Create export folder", async () => {
 			const localMock: any = [];
 			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 			const configuration = new Configuration(localMock as unknown as Argv);
@@ -64,13 +65,13 @@ describe("PackageLockExport", () => {
 			mockFsExists.mockClear();
 			mockMkdirSync.mockClear();
 			mockFsUnlink.mockClear();
-			PackageLockExport.exportReferencedPackages(configuration, result);
+			await PackageLockExport.exportReferencedPackages(configuration, result);
 			expect(mockFsExists).toHaveBeenCalledTimes(1);
 			expect(mockMkdirSync).toHaveBeenCalledTimes(1);
 			expect(mockFsUnlink).toHaveBeenCalledTimes(0);
 			mockFsExists.mockRestore();
 		});
-		it("Clear existing folder", () => {
+		it("Clear existing folder", async () => {
 			const localMock: any = [];
 			localMock[Constants.WORKINGDIRECTORY] = "/tmp/home";
 			const configuration = new Configuration(localMock as unknown as Argv);
@@ -86,7 +87,7 @@ describe("PackageLockExport", () => {
 			mockMkdirSync.mockClear();
 			mockReaddirSync.mockClear();
 			mockPathJoin.mockClear();
-			PackageLockExport.exportReferencedPackages(configuration, result);
+			await PackageLockExport.exportReferencedPackages(configuration, result);
 			expect(mockFsExists).toHaveBeenCalledTimes(1);
 			expect(mockMkdirSync).toHaveBeenCalledTimes(0);
 			expect(mockPathJoin).toHaveBeenCalledTimes(2);
@@ -95,7 +96,7 @@ describe("PackageLockExport", () => {
 			mockFsExists.mockRestore();
 			mockReaddirSync.mockRestore();
 		});
-		it("Check for wrong package information", () => {
+		it("Check for wrong package information", async () => {
 			const localMock: any = [];
 			localMock[Constants.PACKAGEOUTPUT] = "/tmp/home";
 			const configuration = new Configuration(localMock as unknown as Argv);
@@ -107,7 +108,7 @@ describe("PackageLockExport", () => {
 			mockFsExists.mockClear();
 			mockMkdirSync.mockClear();
 			mockFsUnlink.mockClear();
-			PackageLockExport.exportReferencedPackages(configuration, result);
+			await PackageLockExport.exportReferencedPackages(configuration, result);
 			expect(mockFsExists).toHaveBeenCalledTimes(1);
 			expect(mockMkdirSync).toHaveBeenCalledTimes(1);
 			expect(mockFsUnlink).toHaveBeenCalledTimes(0);
@@ -115,7 +116,7 @@ describe("PackageLockExport", () => {
 			expect(result.errors[0].message).toEqual("Referenced package is null. Name: null Version: null");
 			mockFsExists.mockRestore();
 		});
-		it("Check for unknown package reference", () => {
+		it("Check for unknown package reference", async () => {
 			const localMock: any = [];
 			localMock[Constants.PACKAGEOUTPUT] = "/tmp/home";
 			const configuration = new Configuration(localMock as unknown as Argv);
@@ -127,7 +128,7 @@ describe("PackageLockExport", () => {
 			mockFsExists.mockClear();
 			mockMkdirSync.mockClear();
 			mockFsUnlink.mockClear();
-			PackageLockExport.exportReferencedPackages(configuration, result);
+			await PackageLockExport.exportReferencedPackages(configuration, result);
 			expect(mockFsExists).toHaveBeenCalledTimes(1);
 			expect(mockMkdirSync).toHaveBeenCalledTimes(1);
 			expect(mockFsUnlink).toHaveBeenCalledTimes(0);
@@ -135,7 +136,7 @@ describe("PackageLockExport", () => {
 			expect(result.errors[0].message).toEqual("Could not find the referenced package in the package-lock.json. Name: Package0 Version: 1.1.0.0");
 			mockFsExists.mockRestore();
 		});
-		it("Handle error during download", () => {
+		it("Handle error during download", async () => {
 			const localMock: any = [];
 			localMock[Constants.PACKAGEOUTPUT] = "/tmp/home";
 			const configuration = new Configuration(localMock as unknown as Argv);
@@ -145,8 +146,10 @@ describe("PackageLockExport", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return false;
 			});
-			const mockDownloadFile = jest.spyOn(PackageLockExport, "downloadFile").mockImplementation((url: string, dest: string, callback: (error: ErrorMessage) => void) => {
-				callback(new ErrorMessage("Error during download: " + url + " " + dest));
+			const mockDownloadFile = jest.spyOn(PackageLockExport, "downloadFile").mockImplementation((url: string, dest: string): Promise<any> => {
+				return new Promise(async (_resolve, reject) => {
+					reject(new ErrorMessage("Error during download: " + url + " " + dest));
+				});
 			});
 			mockFsExists.mockClear();
 			mockMkdirSync.mockClear();
@@ -154,7 +157,7 @@ describe("PackageLockExport", () => {
 			mockDownloadFile.mockClear();
 			mockPathBasename.mockClear();
 			mockPathJoin.mockClear();
-			PackageLockExport.exportReferencedPackages(configuration, result);
+			await PackageLockExport.exportReferencedPackages(configuration, result);
 			expect(mockFsExists).toHaveBeenCalledTimes(1);
 			expect(mockMkdirSync).toHaveBeenCalledTimes(1);
 			expect(mockFsUnlink).toHaveBeenCalledTimes(0);
@@ -166,7 +169,7 @@ describe("PackageLockExport", () => {
 			mockFsExists.mockRestore();
 			mockDownloadFile.mockRestore();
 		});
-		it("Handle normal download", () => {
+		it("Handle normal download", async () => {
 			const localMock: any = [];
 			localMock[Constants.PACKAGEOUTPUT] = "/tmp/home";
 			const configuration = new Configuration(localMock as unknown as Argv);
@@ -176,8 +179,8 @@ describe("PackageLockExport", () => {
 			const mockFsExists = jest.spyOn(fs, "existsSync").mockImplementation(() => {
 				return false;
 			});
-			const mockDownloadFile = jest.spyOn(PackageLockExport, "downloadFile").mockImplementation(() => {
-				return true;
+			const mockDownloadFile = jest.spyOn(PackageLockExport, "downloadFile").mockImplementation((): Promise<any> => {
+				return Promise.resolve();
 			});
 			mockFsExists.mockClear();
 			mockMkdirSync.mockClear();
@@ -185,7 +188,7 @@ describe("PackageLockExport", () => {
 			mockDownloadFile.mockClear();
 			mockPathBasename.mockClear();
 			mockPathJoin.mockClear();
-			PackageLockExport.exportReferencedPackages(configuration, result);
+			await PackageLockExport.exportReferencedPackages(configuration, result);
 			expect(mockFsExists).toHaveBeenCalledTimes(1);
 			expect(mockMkdirSync).toHaveBeenCalledTimes(1);
 			expect(mockFsUnlink).toHaveBeenCalledTimes(0);
@@ -195,6 +198,62 @@ describe("PackageLockExport", () => {
 			expect(result.errors.length).toEqual(0);
 			mockFsExists.mockRestore();
 			mockDownloadFile.mockRestore();
+		});
+	});
+	describe("downloadFile", () => {
+		const packageFilePath = "tmp.file";
+		let mock: any = null;
+		beforeEach(() => {
+			jest.restoreAllMocks();
+			if (fs.existsSync(packageFilePath)) {
+				fs.unlinkSync(packageFilePath);
+			}
+		});
+		beforeAll(() => {
+			mock = nock("http://localhost:13337")
+				.get("/error")
+				.reply(404, "Not found")
+				.get("/success")
+				.reply(200, "Worked")
+				.get("/success")
+				.reply(200, "Worked");
+		});
+
+		afterAll(() => {
+			mock.done();
+		});
+		it("Error during download", async () => {
+			try {
+				await PackageLockExport.downloadFile("http://localhost:13337/error", packageFilePath);
+			} catch (error) {
+				expect(error).toEqual(new ErrorMessage("HTTPError: Response code 404 (Not Found)"));
+				return;
+			}
+			expect(true).toBeFalsy();
+		});
+		it("Successful download but error during write", async () => {
+			const mockFsWrite = jest.spyOn(fs, "writeFileSync").mockImplementation(() => {
+				throw new Error("Unknown error");
+			});
+			try {
+				await PackageLockExport.downloadFile("http://localhost:13337/success", packageFilePath);
+			} catch (error) {
+				expect(error).toEqual(new ErrorMessage("Error: Unknown error"));
+			}
+			expect(mockFsWrite).toHaveBeenCalledTimes(1);
+			mockFsWrite.mockRestore();
+		});
+		it("Successful download", async () => {
+			const mockFsWrite = jest.spyOn(fs, "writeFileSync").mockImplementation(() => {
+				//
+			});
+			try {
+				await PackageLockExport.downloadFile("http://localhost:13337/success", packageFilePath);
+			} catch (error) {
+				expect(true).toBeFalsy();
+			}
+			expect(mockFsWrite).toHaveBeenCalledTimes(1);
+			mockFsWrite.mockRestore();
 		});
 	});
 });
