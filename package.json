@@ -4,17 +4,19 @@
     "name": "Marcel Prestel",
     "email": "admin@marci4.de"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "Beerware",
   "dependencies": {
     "yargs": "^13.2.4",
     "got": "^9.6.0"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
   "files": [
     "dist"
   ],
+  "main": "./index.js",
+  "bin": {
+    "license-n-package-collector": "./index.js"
+  },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -cw",
