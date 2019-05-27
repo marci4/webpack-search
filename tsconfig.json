@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "es6",
+    "module": "ES2015",
     "noImplicitAny": true,
     "outDir": "./dist",
     "target": "es5",
