@@ -4,14 +4,17 @@
     "name": "Marcel Prestel",
     "email": "admin@marci4.de"
   },
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "Beerware",
   "dependencies": {
     "yargs": "^13.2.4",
     "got": "^9.6.0"
   },
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "files": [
-    "dist"
+    "index.js"
   ],
   "main": "./index.js",
   "bin": {
@@ -21,7 +24,10 @@
     "build": "rollup -c",
     "dev": "rollup -cw",
     "test": "jest",
-    "lint": "tslint -c tslint.json 'src/**/*.ts'"
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint"
   },
   "devDependencies": {
     "@types/node": "11.13.6",
