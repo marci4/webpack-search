@@ -6,16 +6,19 @@
  * this stuff is worth it, you can buy me a beer in return.
  */
 
-import typescript from 'rollup-plugin-typescript2'
-
+import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json'
+
 
 export default {
 	input: 'src/index.ts',
+	sourceMap: true,
 	output: {
 		banner: '#!/usr/bin/env node',
 		file: 'index.js',
-		format: 'cjs'
+		format: 'cjs',
+		sourcemap: true,
+		sourcemapFile: "index.js.map"
 	},
 
 	external: [
@@ -27,6 +30,6 @@ export default {
 	plugins: [
 		typescript({
 			typescript: require('typescript'),
-		}),
+		})
 	],
 }
