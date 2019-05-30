@@ -16,50 +16,49 @@ import {Result} from "../results/result";
 export namespace PackageLockExport {
 
 	export async function exportReferencedPackages(config: Configuration, result: Result): Promise<void> {
-		return new Promise(async (resolve) => {
-			const directory = config.packageOutput;
-			if (!fs.existsSync(directory)) {
-				fs.mkdirSync(directory);
+		const directory = config.packageOutput;
+		if (!fs.existsSync(directory)) {
+			fs.mkdirSync(directory);
+		} else {
+			const files = fs.readdirSync(directory);
+			for (const file of files) {
+				fs.unlinkSync(path.join(directory, file));
+			}
+		}
+		for (const packageReference of result.packages) {
+			if (packageReference.name === null || packageReference.version === null) {
+				result.errors.push(new ErrorMessage("Referenced package is null. Name: " + packageReference.name + " Version: " + packageReference.version));
+				continue;
+			}
+			const packageLockInfo = result.packageLocks.find((packageLockEntry) => {
+				return packageReference.name === packageLockEntry.name && packageReference.version === packageLockEntry.version;
+			});
+			if (packageLockInfo === undefined) {
+				result.errors.push(new ErrorMessage("Could not find the referenced package in the package-lock.json. Name: " + packageReference.name + " Version: " + packageReference.version));
+				continue;
 			} else {
-				const files = fs.readdirSync(directory);
-				for (const file of files) {
-					fs.unlinkSync(path.join(directory, file));
+				try {
+					await PackageLockExport.downloadFile(packageLockInfo.resolvedPath, path.join(directory, path.basename(packageLockInfo.resolvedPath)));
+				} catch (error) {
+					result.errors.push(error);
 				}
 			}
-			for (const packageReference of result.packages) {
-				if (packageReference.name === null || packageReference.version === null) {
-					result.errors.push(new ErrorMessage("Referenced package is null. Name: " + packageReference.name + " Version: " + packageReference.version));
-					continue;
-				}
-				const packageLockInfo = result.packageLocks.find((packageLockEntry) => {
-					return packageReference.name === packageLockEntry.name && packageReference.version === packageLockEntry.version;
-				});
-				if (packageLockInfo === undefined) {
-					result.errors.push(new ErrorMessage("Could not find the referenced package in the package-lock.json. Name: " + packageReference.name + " Version: " + packageReference.version));
-					continue;
-				} else {
-					try {
-						await PackageLockExport.downloadFile(packageLockInfo.resolvedPath, path.join(directory, path.basename(packageLockInfo.resolvedPath)));
-					} catch (error) {
-						result.errors.push(error);
-					}
-				}
-			}
-			resolve();
-		});
+		}
+		return Promise.resolve();
 	}
 
 	export async function downloadFile(url: string, dest: string): Promise<void> {
-		return new Promise(async (resolve, reject) => {
+		try {
+			const response = await got.get(url);
+			fs.writeFileSync(dest, response.body);
+			return Promise.resolve();
+		} catch (error) {
 			try {
-				const response = await got.get(url);
-				fs.writeFileSync(dest, response.body);
-				resolve();
-			} catch (error) {
-				fs.unlink(dest, () => {
-					reject(new ErrorMessage(error.toString()));
-				});
+				fs.unlinkSync(dest);
+			} catch (e) {
+				// Ignore
 			}
-		});
+			return Promise.reject(new ErrorMessage(error.toString()));
+		}
 	}
 }
