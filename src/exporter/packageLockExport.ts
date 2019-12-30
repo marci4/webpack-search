@@ -13,7 +13,6 @@ import {Configuration} from "../configuration/configuration";
 import {ErrorMessage} from "../results/errorMessage";
 import {Result} from "../results/result";
 
-
 export namespace PackageLockExport {
 
 	export async function exportReferencedPackages(config: Configuration, result: Result): Promise<void> {
