@@ -7,11 +7,12 @@
  */
 
 import * as fs from "fs";
-import * as got from "got";
+import got from "got";
 import * as path from "path";
 import {Configuration} from "../configuration/configuration";
 import {ErrorMessage} from "../results/errorMessage";
 import {Result} from "../results/result";
+
 
 export namespace PackageLockExport {
 
@@ -49,7 +50,7 @@ export namespace PackageLockExport {
 
 	export async function downloadFile(url: string, dest: string): Promise<void> {
 		try {
-			const response = await got.get(url);
+			const response = await got(url);
 			fs.writeFileSync(dest, response.body);
 			return Promise.resolve();
 		} catch (error) {
